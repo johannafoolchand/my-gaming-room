@@ -18,7 +18,7 @@ function apply(){
 }
 function renderDecor(){
  decorLayer.innerHTML='';
- state.decor.forEach((item,index)=>{const el=document.createElement('button');el.type='button';el.className='extra-decor';el.textContent=item.emoji;el.setAttribute('aria-label','Move or remove decoration');el.style.left=item.x+'%';el.style.top=item.y+'%';el.style.background='transparent';el.style.border='0';el.addEventListener('pointerdown',startDrag);el.addEventListener('dblclick',()=>{state.decor.splice(index,1);renderDecor();});decorLayer.appendChild(el);});
+ state.decor.forEach((item,index)=>{const el=document.createElement('button');el.type='button';el.className='extra-decor';el.textContent=item.emoji;el.setAttribute('aria-label','Move or remove decoration');el.style.left=item.x+'%';el.style.top=item.y+'%';el.style.background='transparent';el.style.border='0';el.addEventListener('pointerdown',startDrag);el.addEventListener('dblclick',()=>{state.decor.splice(index,1);renderDecor();notify('Decoration removed ♡');});decorLayer.appendChild(el);});
  document.getElementById('itemCount').textContent=8+state.decor.length;
 }
 const icons={heart:'💗',star:'⭐',bow:'🎀',flower:'🌸',disc:'💿',bear:'🧸',lamp:'🪩',candy:'🍬'};
@@ -35,7 +35,7 @@ document.getElementById('setupName').addEventListener('input',e=>{state.roomName
 document.getElementById('consoleSelect').addEventListener('change',e=>state.console=e.target.value);
 document.getElementById('ledColor').addEventListener('input',e=>{state.led=e.target.value;apply();});
 document.getElementById('saveBtn').addEventListener('click',()=>{try{localStorage.setItem('myGamingRoom',JSON.stringify(state));notify('Your room is saved on this device ♡');}catch{notify('Saving is unavailable in this browser.');}});
-document.getElementById('resetBtn').addEventListener('click',()=>{state={...defaults,decor:[]};apply();notify('Room reset ✧');});
+document.getElementById('resetBtn').addEventListener('click',()=>{state={...defaults,decor:[]};try{localStorage.removeItem('myGamingRoom');}catch{}apply();notify('Room reset ✧');});
 document.getElementById('exportBtn').addEventListener('click',()=>{const markup=scene.outerHTML;const svg='<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml">'+markup+'</div></foreignObject></svg>';const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));const a=document.createElement('a');a.href=url;a.download='my-gaming-room.svg';a.click();URL.revokeObjectURL(url);notify('Room export started ✧');});
 try{const saved=localStorage.getItem('myGamingRoom');if(saved){const parsed=JSON.parse(saved);state={...defaults,...parsed,decor:Array.isArray(parsed.decor)?parsed.decor:[]};}}catch{state={...defaults};}
 apply();
