@@ -1,190 +1,35 @@
 (() => {
-  "use strict";
-
-  const STORAGE_KEY = "my-gaming-room.games.v1";
-  const demoGames = [
-    { id: "demo-1", title: "Cyberpunk 2077", platform: "PlayStation 5", genre: "Action RPG", status: "playing", cover: "", createdAt: 3 },
-    { id: "demo-2", title: "The Last of Us Part II", platform: "PlayStation 5", genre: "Adventure", status: "completed", cover: "", createdAt: 2 },
-    { id: "demo-3", title: "Resident Evil 4", platform: "PlayStation 5", genre: "Survival horror", status: "playing", cover: "", createdAt: 1 },
-    { id: "demo-4", title: "Hades", platform: "PC", genre: "Roguelike", status: "wishlist", cover: "", createdAt: 0 }
-  ];
-  const $ = (selector) => document.querySelector(selector);
-  const grid = $("#game-grid");
-  const dialog = $("#game-dialog");
-  let games = loadGames();
-  let activeFilter = "all";
-
-  function loadGames() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved === null) return demoGames.map((game) => ({ ...game }));
-      const parsed = JSON.parse(saved);
-      return Array.isArray(parsed) ? parsed.filter(isValidGame) : [];
-    } catch (error) {
-      console.error("Unable to load the game library:", error);
-      return [];
-    }
-  }
-
-  function isValidGame(game) {
-    return game && typeof game.id === "string" && typeof game.title === "string" &&
-      typeof game.platform === "string" && ["playing", "completed", "wishlist", "backlog"].includes(game.status);
-  }
-
-  function saveGames() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(games));
-      return true;
-    } catch (error) {
-      console.error("Unable to save the game library:", error);
-      showToast("Could not save data. Check your browser storage.");
-      return false;
-    }
-  }
-
-  function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, (char) => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-    })[char]);
-  }
-
-  function safeImageUrl(value) {
-    try {
-      const url = new URL(value);
-      return ["https:", "http:"].includes(url.protocol) ? url.href : "";
-    } catch {
-      return "";
-    }
-  }
-
-  const statusLabels = { playing: "Playing", completed: "Completed", wishlist: "Wishlist", backlog: "Backlog" };
-
-  function render() {
-    const query = $("#search-input").value.trim().toLowerCase();
-    const platform = $("#platform-filter").value;
-    const sort = $("#sort-filter").value;
-    const filtered = games.filter((game) => {
-      const matchesFilter = activeFilter === "all" || game.status === activeFilter;
-      const matchesPlatform = platform === "all" || game.platform === platform;
-      const matchesQuery = [game.title, game.genre, game.platform].join(" ").toLowerCase().includes(query);
-      return matchesFilter && matchesPlatform && matchesQuery;
-    });
-    filtered.sort((a, b) => sort === "az" ? a.title.localeCompare(b.title) : sort === "za" ? b.title.localeCompare(a.title) : b.createdAt - a.createdAt);
-
-    $("#total-count").textContent = games.length;
-    $("#playing-count").textContent = games.filter((game) => game.status === "playing").length;
-    $("#completed-count").textContent = games.filter((game) => game.status === "completed").length;
-    $("#wishlist-count").textContent = games.filter((game) => game.status === "wishlist").length;
-    $("#visible-count").textContent = filtered.length;
-    $("#empty-state").hidden = filtered.length > 0;
-    grid.hidden = filtered.length === 0;
-    grid.innerHTML = filtered.map((game) => {
-      const cover = safeImageUrl(game.cover);
-      const title = escapeHTML(game.title);
-      const image = cover
-        ? `<img src="${escapeHTML(cover)}" alt="Cover of ${title}" loading="lazy" onerror="this.remove()">`
-        : `<span class="cover-placeholder" aria-hidden="true">${title.slice(0, 2).toUpperCase()}</span>`;
-      return `<article class="game-card" data-id="${escapeHTML(game.id)}">
-        <div class="game-cover">${image}<span class="status-pill">${statusLabels[game.status]}</span></div>
-        <div class="card-content"><h3 class="card-title" title="${title}">${title}</h3>
-        <div class="card-meta"><span>${escapeHTML(game.platform)}</span><span>${escapeHTML(game.genre || "No genre")}</span></div>
-        <div class="card-actions"><label class="sr-only" for="status-${escapeHTML(game.id)}">Change status for ${title}</label>
-        <select id="status-${escapeHTML(game.id)}" data-action="status" data-id="${escapeHTML(game.id)}" aria-label="Status for ${title}">
-          ${Object.entries(statusLabels).map(([value, label]) => `<option value="${value}" ${game.status === value ? "selected" : ""}>${label}</option>`).join("")}
-        </select><button class="delete-button" data-action="delete" data-id="${escapeHTML(game.id)}" aria-label="Delete ${title}">Remove ×</button></div></div></article>`;
-    }).join("");
-  }
-
-  function showToast(message) {
-    const toast = $("#toast");
-    toast.textContent = message;
-    toast.classList.add("show");
-    window.clearTimeout(showToast.timer);
-    showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 2600);
-  }
-
-  function openDialog() {
-    $("#game-form").reset();
-    dialog.showModal();
-    $("#game-title").focus();
-  }
-
-  function setFilter(filter) {
-    activeFilter = filter;
-    document.querySelectorAll(".filter-tab").forEach((button) => button.classList.toggle("active", button.dataset.filter === filter));
-    document.querySelectorAll(".nav-link").forEach((link) => link.classList.toggle("active", link.dataset.view === filter));
-    $("#library-heading").textContent = filter === "all" ? "My library" : statusLabels[filter] || "My library";
-    render();
-  }
-
-  $("#add-game-button").addEventListener("click", openDialog);
-  $("#empty-add-button").addEventListener("click", openDialog);
-  $("#close-dialog").addEventListener("click", () => dialog.close());
-  $("#cancel-dialog").addEventListener("click", () => dialog.close());
-  dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
-  $("#game-form").addEventListener("submit", (event) => {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const title = String(form.get("title") || "").trim();
-    if (!title) return;
-    games.unshift({
-      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-      title,
-      platform: String(form.get("platform")),
-      status: String(form.get("status")),
-      genre: String(form.get("genre") || "").trim(),
-      cover: safeImageUrl(String(form.get("cover") || "")),
-      createdAt: Date.now()
-    });
-    saveGames();
-    dialog.close();
-    setFilter("all");
-    showToast(`“${title}” added to your library.`);
-  });
-
-  grid.addEventListener("change", (event) => {
-    const target = event.target;
-    if (target.dataset.action !== "status") return;
-    const game = games.find((item) => item.id === target.dataset.id);
-    if (!game) return;
-    game.status = target.value;
-    saveGames();
-    render();
-    showToast("Game status updated.");
-  });
-
-  grid.addEventListener("click", (event) => {
-    const button = event.target.closest('[data-action="delete"]');
-    if (!button) return;
-    const game = games.find((item) => item.id === button.dataset.id);
-    if (!game || !window.confirm(`Remove “${game.title}” from your library?`)) return;
-    games = games.filter((item) => item.id !== game.id);
-    saveGames();
-    render();
-    showToast("Game removed.");
-  });
-
-  document.querySelectorAll(".filter-tab").forEach((button) => button.addEventListener("click", () => setFilter(button.dataset.filter)));
-  document.querySelectorAll(".nav-link").forEach((link) => link.addEventListener("click", (event) => {
-    event.preventDefault();
-    setFilter(link.dataset.view);
-    $("#page-title").textContent = link.textContent.trim();
-    $("#sidebar").classList.remove("open");
-    $("#menu-toggle").setAttribute("aria-expanded", "false");
-  }));
-  $("#search-input").addEventListener("input", render);
-  $("#platform-filter").addEventListener("change", render);
-  $("#sort-filter").addEventListener("change", render);
-  $("#clear-filters").addEventListener("click", () => {
-    $("#search-input").value = "";
-    $("#platform-filter").value = "all";
-    $("#sort-filter").value = "recent";
-    setFilter("all");
-  });
-  $("#menu-toggle").addEventListener("click", () => {
-    const open = $("#sidebar").classList.toggle("open");
-    $("#menu-toggle").setAttribute("aria-expanded", String(open));
-  });
-
-  render();
+"use strict";
+const KEY="my-gaming-room.design.v1";
+const $=s=>document.querySelector(s);
+const defaults={name:"Pixel Paradise",wall:"pink",floor:"wood",glow:65,lights:true,platform:"PlayStation 5",decorations:[]};
+let state=load();
+let drag=null;
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY));return v&&typeof v==="object"?{...defaults,...v,decorations:Array.isArray(v.decorations)?v.decorations:[]}:structuredClone(defaults)}catch{return structuredClone(defaults)}}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(state));$("#save-state").textContent="● Saved on this device";}catch{$("#save-state").textContent="! Save unavailable";}}
+function toast(s){const t=$("#toast");t.textContent=s;t.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),2200)}
+function apply(){
+$("#room-name").value=state.name;$("#room-title").textContent="/ "+state.name;$("#back-wall").style.setProperty("--wall",({pink:"#e8b9db",lilac:"#c7b7ed",blue:"#a9cce8",dark:"#66617e"})[state.wall]||"#e8b9db");
+$("#floor").className="floor"+(state.floor==="wood"?"": " "+state.floor);$("#glow-range").value=state.glow;$("#glow-value").value=state.glow+"%";$("#room-stage").style.setProperty("--glow",state.lights?state.glow/100:0);$("#light-toggle").textContent=state.lights?"☼ Lights on":"☾ Lights off";$("#light-toggle").setAttribute("aria-pressed",String(state.lights));$("#platform").value=state.platform;
+document.querySelectorAll(".swatch").forEach(b=>b.classList.toggle("selected",b.dataset.color===state.wall));document.querySelectorAll(".choice").forEach(b=>b.classList.toggle("selected",b.dataset.floor===state.floor));renderDecor();
+}
+function renderDecor(){const layer=$("#decor-layer");layer.innerHTML="";state.decorations.forEach(d=>{const el=document.createElement("button");el.type="button";el.className="decoration";el.textContent=d.emoji;el.style.left=d.x+"%";el.style.top=d.y+"%";el.setAttribute("aria-label",d.name+" decoration; select and press Delete to remove");el.title=d.name+" — drag to move, Delete to remove";el.addEventListener("pointerdown",startDrag);el.addEventListener("click",()=>{document.querySelectorAll(".decoration").forEach(x=>x.classList.remove("selected"));el.classList.add("selected")});layer.append(el)})}
+const decorMap={plant:["🪴","Plant"],star:["⭐","Star"],console:["🎮","Console"],lamp:["💡","Lamp"],cat:["🐈","Cat"],heart:["💗","Heart"]};
+$("#wall-swatches").addEventListener("click",e=>{const b=e.target.closest("[data-color]");if(!b)return;state.wall=b.dataset.color;apply();persist()});
+$("#floor-choices").addEventListener("click",e=>{const b=e.target.closest("[data-floor]");if(!b)return;state.floor=b.dataset.floor;apply();persist()});
+$("#glow-range").addEventListener("input",e=>{state.glow=Number(e.target.value);apply();persist()});
+$("#light-toggle").addEventListener("click",()=>{state.lights=!state.lights;apply();persist()});
+$("#room-name").addEventListener("input",e=>{state.name=e.target.value.slice(0,28)||"My gaming room";$("#room-title").textContent="/ "+state.name;persist()});
+$("#platform").addEventListener("change",e=>{state.platform=e.target.value;persist();toast("Platform updated")});
+$("#decor-options").addEventListener("click",e=>{const b=e.target.closest("[data-decor]");if(!b)return;const [emoji,name]=decorMap[b.dataset.decor];state.decorations.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),emoji,name,x:35+Math.random()*30,y:35+Math.random()*25});renderDecor();persist();toast(name+" added — drag it into place")});
+function startDrag(e){e.preventDefault();const el=e.currentTarget;const d=state.decorations.find(x=>x.emoji===el.textContent&&Math.abs(x.x-parseFloat(el.style.left))<1&&Math.abs(x.y-parseFloat(el.style.top))<1);if(!d)return;drag={id:d.id};el.setPointerCapture(e.pointerId);el.addEventListener("pointermove",moveDrag);el.addEventListener("pointerup",endDrag,{once:true})}
+function moveDrag(e){if(!drag)return;const rect=$("#room").getBoundingClientRect();const d=state.decorations.find(x=>x.id===drag.id);if(!d)return;d.x=Math.max(0,Math.min(94,(e.clientX-rect.left)/rect.width*100));d.y=Math.max(0,Math.min(88,(e.clientY-rect.top)/rect.height*100));const el=e.currentTarget;el.style.left=d.x+"%";el.style.top=d.y+"%"}
+function endDrag(e){if(!drag)return;e.currentTarget.removeEventListener("pointermove",moveDrag);drag=null;persist()}
+$("#clear-decor").addEventListener("click",()=>{state.decorations=[];renderDecor();persist();toast("Decorations cleared")});
+document.addEventListener("keydown",e=>{if(e.key!=="Delete"&&e.key!=="Backspace")return;if(["INPUT","SELECT","TEXTAREA"].includes(document.activeElement.tagName))return;const selected=document.querySelector(".decoration.selected");if(!selected)return;const rect=selected.getBoundingClientRect(),room=$("#room").getBoundingClientRect();const d=state.decorations.find(x=>Math.abs(x.x-(rect.left-room.left)/room.width*100)<3&&Math.abs(x.y-(rect.top-room.top)/room.height*100)<3);if(d){state.decorations=state.decorations.filter(x=>x.id!==d.id);renderDecor();persist();}});
+$("#reset-room").addEventListener("click",()=>{if(!confirm("Reset your room to the original design?"))return;state=structuredClone(defaults);apply();persist();toast("Room reset")});
+$("#export-room").addEventListener("click",()=>{const wall=({pink:"#e8b9db",lilac:"#c7b7ed",blue:"#a9cce8",dark:"#66617e"})[state.wall];const floor=state.floor==="pink"?"#d78fbc":state.floor==="checker"?"#cbb9dc":"#c68f72";const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700"><rect width="100%" height="100%" fill="#f6f0fa"/><polygon points="170,80 830,80 830,430 170,490" fill="${wall}"/><polygon points="830,80 1000,140 1000,490 830,430" fill="#c99fc9"/><polygon points="170,490 830,430 1000,490 500,680" fill="${floor}"/><rect x="420" y="265" width="250" height="100" rx="8" fill="#f1d3e5" stroke="#9e6c9a" stroke-width="8"/><rect x="500" y="120" width="170" height="130" rx="8" fill="#51455f"/><rect x="510" y="130" width="150" height="110" rx="4" fill="#514080"/><text x="585" y="185" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#f9d5ed">GAME ON</text><text x="500" y="55" text-anchor="middle" font-family="sans-serif" font-size="28" font-weight="bold" fill="#554568">${escapeXml(state.name)}</text>${state.decorations.map(d=>`<text x="${d.x*10}" y="${d.y*7.1}" font-size="38">${d.emoji}</text>`).join("")}<text x="500" y="680" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#554568">${escapeXml(state.platform)}</text></svg>`;
+const blob=new Blob([svg],{type:"image/svg+xml"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="my-gaming-room.svg";a.click();URL.revokeObjectURL(url);toast("Room exported as SVG")});
+function escapeXml(s){return String(s).replace(/[<>&'"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;","'":"&apos;",'"':"&quot;"}[c]))}
+apply();
 })();
