@@ -1,6 +1,6 @@
 # ✦ My Gaming Room — Y2K Edition
 
-> Design your own little gaming sanctuary with a playful Y2K aesthetic and an isometric room preview.
+> Design your own little gaming sanctuary with a playful Y2K aesthetic and an interactive gaming-room studio.
 
 ![HTML](https://img.shields.io/badge/HTML5-Structure-E89AC7?style=flat-square&logo=html5&logoColor=white)
 ![CSS](https://img.shields.io/badge/CSS3-Styling-C7A9E8?style=flat-square&logo=css3&logoColor=white)
@@ -16,22 +16,22 @@ My Gaming Room is a small front-end project built around a simple idea: create a
 | Interface | HTML5 |
 | Styling | CSS3, responsive layouts and isometric shapes |
 | Interactions | Vanilla JavaScript and DOM events |
-| Room customization | Wall themes, floor styles, lighting and decorations |
+| Room customization | Room themes, floor styles, lighting and movable furniture |
 | Persistence | Browser `localStorage` |
 | Export | SVG |
 | Deployment | GitHub Pages with GitHub Actions |
 
 ## Features
 
-- Isometric gaming-room scene built with HTML and CSS
-- Y2K-inspired visual identity with pastel themes and decorative details
-- Customizable wall palettes and floor styles
-- Lighting controls and adjustable ambient glow
-- Add, move and remove room decorations
+- Immersive pastel gaming-room studio with a Y2K / Pinterest-inspired interface
+- Add furniture and decor from a horizontal catalogue
+- Drag placed objects around the room and double-click to remove them
+- Switch room palettes and floor finishes
+- Toggle the room lighting and choose an ambient LED colour
 - Personalize the room name and gaming setup
-- Save room preferences locally in the browser
-- Export a room illustration as an SVG file
-- Responsive layout for desktop and mobile screens
+- Save and restore room layouts locally with browser `localStorage`
+- Export a portable JSON file containing the room configuration
+- Responsive studio layout for desktop and mobile screens
 
 ## Architecture
 
@@ -57,7 +57,7 @@ flowchart TD
 
 ## Preview
 
-The room is designed as a lightweight, browser-based experience rather than a full 3D application. Its isometric perspective is created with CSS shapes and layered elements.
+The room is a lightweight 2D / 2.5D browser experience, not a full 3D engine. The room illustration is layered with SVG and CSS, while furniture and decorative objects are placed as interactive DOM elements.
 
 ## Requirements
 
@@ -107,11 +107,11 @@ To enable deployment, make sure GitHub Pages is configured to use **GitHub Actio
 
 ## What this project demonstrates
 
-- Structuring a front-end application with semantic HTML
-- Building an isometric visual scene with CSS
-- Creating interactive controls with vanilla JavaScript
-- Managing browser-side state with `localStorage`
-- Exporting generated content as an SVG file
+- Structuring a responsive front-end application with semantic HTML
+- Building a layered room scene with SVG and CSS
+- Implementing pointer-based drag interactions with vanilla JavaScript
+- Managing and persisting client-side room state with `localStorage`
+- Exporting a room configuration as JSON
 - Automating static-site deployment with GitHub Actions
 
 ## Roadmap
