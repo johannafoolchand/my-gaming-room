@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101018">
+  <meta name="description" content="My Gaming Room — organise ta bibliothèque de jeux, suis ta progression et garde ta wishlist au même endroit.">
+  <title>My Gaming Room — Your personal game library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="My Gaming Room, accueil"><span class="brand-mark">M</span><span>MY GAMING<span class="brand-muted">ROOM</span></span></a>
+      <p class="nav-label">WORKSPACE</p>
+      <nav class="main-nav" aria-label="Navigation principale">
+        <a class="nav-link active" href="#overview" data-view="all"><span>▦</span> Overview</a>
+        <a class="nav-link" href="#library" data-view="all"><span>▤</span> My library</a>
+        <a class="nav-link" href="#playing" data-view="playing"><span>◷</span> Currently playing</a>
+        <a class="nav-link" href="#completed" data-view="completed"><span>✓</span> Completed</a>
+        <a class="nav-link" href="#wishlist" data-view="wishlist"><span>♡</span> Wishlist</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="profile-avatar">JG</div>
+        <div><strong>Player one</strong><small>Personal collection</small></div>
+        <span class="profile-dot" aria-label="Local mode"></span>
+      </div>
+    </aside>
+
+    <main class="main-content" id="overview">
+      <header class="topbar">
+        <button class="icon-button menu-toggle" id="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+        <div class="breadcrumb">Workspace <span>/</span> <strong id="page-title">Overview</strong></div>
+        <div class="topbar-actions"><span class="local-indicator"><i></i> Saved locally</span><button class="avatar-button" aria-label="Profil">JG</button></div>
+      </header>
+
+      <section class="welcome-row">
+        <div><p class="eyebrow">YOUR PERSONAL GAME SPACE</p><h1>Welcome back, Player <span>✦</span></h1><p class="subtitle">Your games, your progress, all in one place.</p></div>
+        <button class="primary-button" id="add-game-button"><span>＋</span> Add a game</button>
+      </section>
+
+      <section class="stats-grid" aria-label="Library statistics">
+        <article class="stat-card"><div class="stat-top"><span>Total games</span><span class="stat-icon violet">▤</span></div><strong id="total-count">0</strong><small>In your collection</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Currently playing</span><span class="stat-icon blue">◷</span></div><strong id="playing-count">0</strong><small>Ready for your next session</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Completed</span><span class="stat-icon green">✓</span></div><strong id="completed-count">0</strong><small>Games finished</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Wishlist</span><span class="stat-icon pink">♡</span></div><strong id="wishlist-count">0</strong><small>On your radar</small></article>
+      </section>
+
+      <section class="library-section" id="library">
+        <div class="section-heading"><div><p class="eyebrow">YOUR COLLECTION</p><h2 id="library-heading">My library <span id="visible-count">0</span></h2></div><button class="text-button" id="clear-filters">Reset filters ↗</button></div>
+        <div class="toolbar">
+          <label class="search-box"><span>⌕</span><input id="search-input" type="search" placeholder="Search your games..." aria-label="Search games"></label>
+          <label class="select-wrap"><span class="sr-only">Platform</span><select id="platform-filter"><option value="all">All platforms</option><option>PC</option><option>PlayStation 5</option><option>PlayStation 4</option><option>Xbox</option><option>Nintendo Switch</option><option>Other</option></select></label>
+          <label class="select-wrap"><span class="sr-only">Sort</span><select id="sort-filter"><option value="recent">Recently added</option><option value="az">Name: A–Z</option><option value="za">Name: Z–A</option></select></label>
+        </div>
+        <div class="filter-tabs" role="group" aria-label="Filter by status">
+          <button class="filter-tab active" data-filter="all">All games</button><button class="filter-tab" data-filter="playing">Playing</button><button class="filter-tab" data-filter="completed">Completed</button><button class="filter-tab" data-filter="wishlist">Wishlist</button><button class="filter-tab" data-filter="backlog">Backlog</button>
+        </div>
+        <div class="game-grid" id="game-grid" aria-live="polite"></div>
+        <div class="empty-state" id="empty-state" hidden><div class="empty-icon">✧</div><h3>No games found</h3><p>Try another search or add your first game to the library.</p><button class="primary-button" id="empty-add-button">＋ Add a game</button></div>
+      </section>
+      <footer class="footer"><span>MY GAMING ROOM</span><span>Built for players, by a player.</span><span>Data stays on this device.</span></footer>
+    </main>
+  </div>
+
+  <dialog class="game-dialog" id="game-dialog">
+    <form id="game-form">
+      <div class="dialog-heading"><div><p class="eyebrow">EXPAND YOUR COLLECTION</p><h2 id="dialog-title">Add a game</h2></div><button type="button" class="icon-button" id="close-dialog" aria-label="Close">✕</button></div>
+      <label>Game title<input name="title" id="game-title" maxlength="70" placeholder="e.g. Cyberpunk 2077" required></label>
+      <div class="form-row"><label>Platform<select name="platform" required><option value="PC">PC</option><option value="PlayStation 5">PlayStation 5</option><option value="PlayStation 4">PlayStation 4</option><option value="Xbox">Xbox</option><option value="Nintendo Switch">Nintendo Switch</option><option value="Other">Other</option></select></label><label>Status<select name="status" required><option value="playing">Currently playing</option><option value="completed">Completed</option><option value="wishlist">Wishlist</option><option value="backlog">Backlog</option></select></label></div>
+      <label>Genre <input name="genre" maxlength="35" placeholder="e.g. Action RPG"></label>
+      <label>Cover image URL <input name="cover" type="url" placeholder="https://… (optional)"></label>
+      <p class="form-hint">Your collection is saved in your browser using local storage.</p>
+      <div class="dialog-actions"><button type="button" class="secondary-button" id="cancel-dialog">Cancel</button><button class="primary-button" type="submit">Save game</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
