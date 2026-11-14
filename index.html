@@ -3,130 +3,112 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#211827">
-  <meta name="description" content="Gaming Room Studio — imagine, personnalise et sauvegarde ton espace gaming.">
-  <title>Gaming Room Studio — Create your space</title>
+  <meta name="theme-color" content="#17121f">
+  <meta name="description" content="Gaming Room Studio — un configurateur 3D pour créer ton espace gaming.">
+  <title>Gaming Room Studio — 3D Creator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/my-gaming-room/styles.css?v=20261115-3">
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
-  <script src="/my-gaming-room/app.js?v=20261115-3" defer></script>
+  <link rel="stylesheet" href="./styles.css?v=3d-studio-1">
+  <script type="importmap">
+    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}
+  </script>
+  <script type="module" src="./app.js?v=3d-studio-1"></script>
 </head>
 <body>
 <div class="app-shell">
   <header class="topbar">
-    <a class="brand" href="#studio" aria-label="Gaming Room Studio accueil"><span class="brand-symbol">✦</span><span>GAMING ROOM <b>STUDIO</b></span></a>
+    <a class="brand" href="#studio"><span class="brand-symbol">✦</span><span>GAMING ROOM <b>STUDIO</b></span></a>
     <nav class="main-nav" aria-label="Navigation principale">
       <button class="nav-link active" data-view="studio">Ma chambre</button>
       <button class="nav-link" data-view="catalogue">Catalogue</button>
-      <button class="nav-link" data-view="inspirations">Inspirations</button>
       <button class="nav-link" data-view="saved">Sauvegardes <span class="saved-count" id="savedCount">0</span></button>
     </nav>
-    <div class="top-actions"><span class="online-dot"></span><span class="studio-label">STUDIO EN LIGNE</span><button class="avatar" aria-label="Profil">G</button><button class="icon-button" id="settingsBtn" aria-label="Paramètres">⚙</button></div>
+    <div class="top-actions"><span class="online-dot"></span><span class="studio-label">3D STUDIO</span><button class="icon-button" id="settingsBtn" aria-label="Paramètres">⚙</button></div>
   </header>
 
   <main id="studio" class="workspace">
     <aside class="left-rail">
-      <div class="rail-label">CRÉATION</div>
-      <button class="rail-item active" data-category="all"><span>▦</span> Vue d'ensemble</button>
+      <div class="rail-label">CONSTRUIRE</div>
+      <button class="rail-item active" data-category="all"><span>▦</span> Tout</button>
       <button class="rail-item" data-category="furniture"><span>▤</span> Mobilier</button>
       <button class="rail-item" data-category="gaming"><span>⌘</span> Setup gaming</button>
       <button class="rail-item" data-category="lighting"><span>☼</span> Éclairage</button>
       <button class="rail-item" data-category="decor"><span>✧</span> Décoration</button>
       <button class="rail-item" data-category="plants"><span>♧</span> Plantes</button>
       <button class="rail-item" data-category="walls"><span>▧</span> Murs & sols</button>
-      <div class="style-card"><span class="style-kicker">TON UNIVERS</span><strong id="styleName">Y2K DREAM</strong><div class="style-tags"><i>COZY</i><i>GAMING</i><i>RGB</i></div></div>
-      <div class="rail-bottom"><span class="tiny-star">✦</span><span>Make it yours.</span></div>
+      <div class="style-card"><span class="style-kicker">TON UNIVERS</span><strong id="styleName">PINK DREAM</strong><div class="style-tags"><i>COZY</i><i>GAMING</i><i>RGB</i></div></div>
     </aside>
 
     <section class="stage-column">
-      <div class="stage-heading"><div><p class="eyebrow">YOUR PERSONAL SPACE</p><h1 id="pageTitle">Ma chambre <span>✦</span></h1><p class="stage-subtitle">Compose un espace qui te ressemble, détail après détail.</p></div><div class="stage-actions"><button class="subtle-button" id="resetBtn">↺ Réinitialiser</button><button class="primary-button" id="saveBtn">♡ Enregistrer</button></div></div>
+      <div class="stage-heading">
+        <div><p class="eyebrow">YOUR PERSONAL SPACE</p><h1 id="pageTitle">Ma chambre <span>✦</span></h1><p class="stage-subtitle">Construis ton setup dans une vraie pièce 3D.</p></div>
+        <div class="stage-actions"><button class="subtle-button" id="resetBtn">↺ Réinitialiser</button><button class="primary-button" id="saveBtn">♡ Enregistrer</button></div>
+      </div>
+
       <div class="scene-frame">
-        <div class="scene-topline"><span><i class="pulse-dot"></i> APERÇU EN DIRECT</span><div class="scene-tools"><button id="toggleLights" aria-pressed="true">☼ Lumières ON</button><button id="fullscreenBtn" aria-label="Plein écran">⛶</button></div></div>
-        <div class="room-scene" id="roomScene" role="img" aria-label="Chambre gaming immersive avec lit, bureau, écrans et éclairage RGB">
-          <div class="scene-image" id="sceneImage"></div>
-          <div class="game-screen game-spiderman" id="gameScreen" aria-label="Aperçu du jeu affiché sur l'écran">
-            <div class="game-screen-art"></div>
-            <div class="game-screen-copy"><span class="game-screen-kicker">PLAYSTATION 5 · NOW PLAYING</span><strong id="gameScreenTitle">MARVEL’S SPIDER-MAN 2</strong><small id="gameScreenSubtitle">NEW YORK · TWO SPIDERS. ONE CITY.</small></div>
-          </div>
-          <div class="scene-vignette"></div>
-          <div class="scene-label"><span class="scene-label-dot"></span><span id="sceneRoomName">MY DREAM ROOM</span><small>PERSONAL SPACE / 001</small></div>
-          <div class="scene-object-layer" id="objectLayer" aria-label="Objets ajoutés à la chambre"></div>
-          <div class="scene-caption"><span>01</span> A SPACE TO PLAY, REST & CREATE</div>
+        <div class="scene-topline"><span><i class="pulse-dot"></i> SCÈNE 3D INTERACTIVE</span><div class="scene-tools"><button id="cameraHome">⌂ Vue initiale</button><button id="toggleLights" aria-pressed="true">☼ Lumières</button><button id="fullscreenBtn" aria-label="Plein écran">⛶</button></div></div>
+        <div class="room-scene" id="roomScene">
+          <div id="scene3d" class="scene-3d" aria-label="Pièce 3D interactive"></div>
+          <div class="scene-hint" id="sceneHint">Fais glisser pour tourner · Molette pour zoomer · Clique un objet pour le sélectionner</div>
+          <div class="scene-label"><span class="scene-label-dot"></span><span id="sceneRoomName">MY DREAM ROOM</span><small>3D SPACE / 001</small></div>
           <div class="scene-zoom"><button id="zoomOut" aria-label="Dézoomer">−</button><span id="zoomValue">100%</span><button id="zoomIn" aria-label="Zoomer">+</button></div>
         </div>
-        <div class="scene-status"><span><b id="objectCount">0</b> OBJETS AJOUTÉS</span><span>FAIS GLISSER LES ÉLÉMENTS POUR LES PLACER · DOUBLE-CLIC POUR SUPPRIMER</span><span class="status-ready">● SAUVEGARDE LOCALE</span></div>
+        <div class="scene-status"><span><b id="objectCount">0</b> OBJETS DANS LA PIÈCE</span><span>CLIQUE UN OBJET POUR LE SÉLECTIONNER</span><span class="status-ready" id="engineStatus">● INITIALISATION 3D</span></div>
       </div>
 
       <section class="catalog-strip" id="cataloguePanel">
-        <div class="catalog-heading"><div><p class="eyebrow">THE OBJECT LIBRARY</p><h2>Ajoute ta touche personnelle</h2></div><button class="text-button" data-view="catalogue">Voir tout le catalogue ↗</button></div>
-        <div class="object-grid" id="quickCatalog">
-          <button class="object-card" data-object="chair"><span class="object-thumb thumb-chair"><i></i></span><b>Fauteuil gaming</b><small>ASSISE</small></button>
-          <button class="object-card" data-object="desk"><span class="object-thumb thumb-desk"><i></i></span><b>Bureau minimal</b><small>MOBILIER</small></button>
-          <button class="object-card" data-object="monitor"><span class="object-thumb thumb-monitor"><i></i></span><b>Écran ultra-wide</b><small>SETUP</small></button>
-          <button class="object-card" data-object="pc"><span class="object-thumb thumb-pc"><i></i></span><b>PC RGB</b><small>SETUP</small></button>
-          <button class="object-card" data-object="lamp"><span class="object-thumb thumb-lamp"><i></i></span><b>Lampe d'ambiance</b><small>ÉCLAIRAGE</small></button>
-          <button class="object-card" data-object="plant"><span class="object-thumb thumb-plant"><i></i></span><b>Plante suspendue</b><small>DÉCOR</small></button>
-          <button class="object-card" data-object="poster"><span class="object-thumb thumb-poster"><i></i></span><b>Affiche artistique</b><small>DÉCOR</small></button>
-          <button class="object-card" data-object="rug"><span class="object-thumb thumb-rug"><i></i></span><b>Tapis fluffy</b><small>TEXTILE</small></button>
-          <button class="object-card" data-object="shelf"><span class="object-thumb thumb-shelf"><i></i></span><b>Étagère murale</b><small>DÉCOR</small></button>
-          <button class="object-card" data-object="headset"><span class="object-thumb thumb-headset"><i></i></span><b>Casque gaming</b><small>SETUP</small></button>
-        </div>
+        <div class="catalog-heading"><div><p class="eyebrow">THE OBJECT LIBRARY</p><h2>Choisis ton mobilier</h2></div><span class="catalog-note">Clique pour ajouter dans la pièce</span></div>
+        <div class="object-grid" id="quickCatalog"></div>
       </section>
-      <section class="inspiration-panel hidden" id="inspirationPanel"><div class="catalog-heading"><div><p class="eyebrow">CURATED MOODS</p><h2>Choisis ton ambiance</h2></div></div><div class="mood-grid"><button data-theme="y2k"><span class="mood-image mood-y2k"></span><b>Y2K Dream</b><small>Pink glow · glossy details</small></button><button data-theme="cyber"><span class="mood-image mood-cyber"></span><b>Cyber Glow</b><small>Dark · electric · bold</small></button><button data-theme="cozy"><span class="mood-image mood-cozy"></span><b>Cozy Pink</b><small>Soft · warm · dreamy</small></button><button data-theme="nature"><span class="mood-image mood-nature"></span><b>Nature Gamer</b><small>Green · calm · organic</small></button></div></section>
+
       <section class="saved-panel hidden" id="savedPanel"><div class="catalog-heading"><div><p class="eyebrow">YOUR COLLECTION</p><h2>Mes chambres sauvegardées</h2></div></div><div id="savedRooms" class="saved-rooms"></div></section>
     </section>
 
     <aside class="right-panel">
       <div class="panel-heading"><div><p class="eyebrow">MAKE IT YOURS</p><h2>Personnalisation</h2></div><span class="panel-spark">✳</span></div>
-      <div class="panel-tabs"><button class="panel-tab active" data-panel="themes">Thèmes</button><button class="panel-tab" data-panel="colors">Couleurs</button><button class="panel-tab" data-panel="ambience">Ambiance</button></div>
+      <div class="panel-tabs"><button class="panel-tab active" data-panel="themes">Styles</button><button class="panel-tab" data-panel="colors">Couleurs</button><button class="panel-tab" data-panel="properties">Objet</button></div>
       <div class="panel-content active" id="themes">
-        <div class="control-label">THÈMES PRÉDÉFINIS <span>01 / 04</span></div>
+        <div class="control-label">AMBIANCES PRÉDÉFINIES</div>
         <div class="theme-grid">
-          <button class="theme-choice selected" data-theme="y2k"><span class="theme-preview preview-y2k"></span><b>Y2K Dream</b></button>
+          <button class="theme-choice selected" data-theme="pink"><span class="theme-preview preview-y2k"></span><b>Pink Dream</b></button>
           <button class="theme-choice" data-theme="cyber"><span class="theme-preview preview-cyber"></span><b>Cyber Glow</b></button>
-          <button class="theme-choice" data-theme="cozy"><span class="theme-preview preview-cozy"></span><b>Cozy Pink</b></button>
-          <button class="theme-choice" data-theme="minimal"><span class="theme-preview preview-minimal"></span><b>Minimal</b></button>
+          <button class="theme-choice" data-theme="cozy"><span class="theme-preview preview-cozy"></span><b>Cozy Warm</b></button>
+          <button class="theme-choice" data-theme="dark"><span class="theme-preview preview-minimal"></span><b>Dark Setup</b></button>
           <button class="theme-choice" data-theme="nature"><span class="theme-preview preview-nature"></span><b>Nature</b></button>
           <button class="theme-choice" data-theme="galaxy"><span class="theme-preview preview-galaxy"></span><b>Galaxy</b></button>
         </div>
         <div class="panel-divider"></div>
-        <div class="control-label">SUR TON ÉCRAN <span>PLAYSTATION 5</span></div>
-        <div class="game-choice-grid">
-          <button class="game-choice selected" data-game="spiderman"><span class="game-thumb game-thumb-spiderman"></span><b>Spider-Man 2</b></button>
-          <button class="game-choice" data-game="godofwar"><span class="game-thumb game-thumb-godofwar"></span><b>God of War</b></button>
-          <button class="game-choice" data-game="horizon"><span class="game-thumb game-thumb-horizon"></span><b>Horizon</b></button>
-          <button class="game-choice" data-game="gt7"><span class="game-thumb game-thumb-gt7"></span><b>Gran Turismo 7</b></button>
-          <button class="game-choice" data-game="astrobot"><span class="game-thumb game-thumb-astrobot"></span><b>Astro Bot</b></button>
-          <button class="game-choice" data-game="tlou"><span class="game-thumb game-thumb-tlou"></span><b>The Last of Us</b></button>
-        </div>
+        <div class="control-label">MATÉRIAU DU SOL</div>
+        <div class="finish-list"><button class="finish-choice selected" data-finish="wood"><span class="finish-swatch wood"></span> Parquet clair</button><button class="finish-choice" data-finish="dark"><span class="finish-swatch dark"></span> Bois foncé</button><button class="finish-choice" data-finish="stone"><span class="finish-swatch soft"></span> Béton doux</button></div>
         <div class="panel-divider"></div>
-        <div class="control-label">DÉCOR DE LA PIÈCE <span>CHANGE L'UNIVERS</span></div>
-        <div class="room-scene-choices">
-          <button class="room-scene-choice selected" data-room-scene="gaming"><span class="room-scene-thumb room-thumb-gaming"></span><b>Gaming studio</b></button>
-          <button class="room-scene-choice" data-room-scene="cozy"><span class="room-scene-thumb room-thumb-cozy"></span><b>Cozy bedroom</b></button>
-          <button class="room-scene-choice" data-room-scene="neon"><span class="room-scene-thumb room-thumb-neon"></span><b>Neon battlestation</b></button>
-        </div>
-        <div class="panel-divider"></div>
-        <div class="control-label">SOUS TES PIEDS</div>
-        <div class="finish-list"><button class="finish-choice selected" data-finish="wood"><span class="finish-swatch wood"></span> Parquet clair <b>✓</b></button><button class="finish-choice" data-finish="dark"><span class="finish-swatch dark"></span> Bois foncé <b>✓</b></button><button class="finish-choice" data-finish="soft"><span class="finish-swatch soft"></span> Tapis moelleux <b>✓</b></button></div>
+        <div class="control-label">JEU SUR L'ÉCRAN</div>
+        <select id="gameSelect" class="text-input">
+          <option value="spiderman">Marvel's Spider-Man 2</option><option value="godofwar">God of War Ragnarök</option><option value="horizon">Horizon Forbidden West</option><option value="gt7">Gran Turismo 7</option><option value="astrobot">Astro Bot</option><option value="tlou">The Last of Us Part II</option><option value="ghost">Ghost of Tsushima</option><option value="re4">Resident Evil 4</option>
+        </select>
       </div>
       <div class="panel-content" id="colors">
-        <div class="control-label">PALETTE DE COULEURS</div><div class="color-swatches"><button class="color-swatch selected" data-color="#ed82cf" style="--swatch:#ed82cf" aria-label="Rose"></button><button class="color-swatch" data-color="#a88be9" style="--swatch:#a88be9" aria-label="Violet"></button><button class="color-swatch" data-color="#6d9be9" style="--swatch:#6d9be9" aria-label="Bleu"></button><button class="color-swatch" data-color="#73cbb9" style="--swatch:#73cbb9" aria-label="Vert"></button><button class="color-swatch" data-color="#f0c9a6" style="--swatch:#f0c9a6" aria-label="Ambre"></button></div>
+        <div class="control-label">COULEUR DES MURS</div><div class="color-swatches"><button class="color-swatch selected" data-wall="#e7dce8" style="--swatch:#e7dce8" aria-label="Ivoire rosé"></button><button class="color-swatch" data-wall="#d8c5e7" style="--swatch:#d8c5e7" aria-label="Lavande"></button><button class="color-swatch" data-wall="#b6c9df" style="--swatch:#b6c9df" aria-label="Bleu brume"></button><button class="color-swatch" data-wall="#c4d6c2" style="--swatch:#c4d6c2" aria-label="Sauge"></button><button class="color-swatch" data-wall="#282434" style="--swatch:#282434" aria-label="Charbon"></button></div>
+        <div class="panel-divider"></div><div class="control-label">COULEUR DES LED <span id="intensityLabel">70%</span></div><div class="led-picker-row"><input id="ledColor" type="color" value="#eb7bd0" aria-label="Couleur LED"><input id="intensity" class="range-input" type="range" min="0" max="100" value="70"></div>
         <div class="panel-divider"></div><div class="control-label">NOM DE TA CHAMBRE</div><input id="roomNameInput" class="text-input" maxlength="28" value="My dream room" placeholder="Donne un nom à ta chambre">
-        <div class="panel-divider"></div><div class="control-label">INTENSITÉ DES LED <span id="intensityLabel">70%</span></div><input id="intensity" class="range-input" type="range" min="0" max="100" value="70">
+        <div class="panel-divider"></div><button class="wide-toggle" id="lightMode"><span>☼</span><span><b>Éclairage principal</b><small>Activer ou couper la lumière</small></span><i class="toggle-switch on"></i></button>
       </div>
-      <div class="panel-content" id="ambience">
-        <div class="control-label">ÉCLAIRAGE DE LA PIÈCE</div><button class="wide-toggle" id="lightMode"><span>☼</span><span><b>Éclairage principal</b><small>Activer ou couper la lumière</small></span><i class="toggle-switch on"></i></button>
-        <div class="panel-divider"></div><div class="control-label">AMBIANCE LED</div><div class="ambience-grid"><button class="ambience-choice active" data-ambience="static"><span>☼</span>Fixe</button><button class="ambience-choice" data-ambience="rainbow"><span>◌</span>Rainbow</button><button class="ambience-choice" data-ambience="pulse"><span>∿</span>Pulse</button><button class="ambience-choice" data-ambience="breathe"><span>◉</span>Breathing</button></div>
-        <div class="panel-divider"></div><div class="control-label">ATMOSPHÈRE</div><p class="helper-copy">Ajuste la luminosité et choisis une ambiance pour transformer l'atmosphère de ton espace.</p>
+      <div class="panel-content" id="properties">
+        <div id="emptySelection" class="empty-selection"><span>✧</span><b>Aucun objet sélectionné</b><small>Choisis un meuble dans la pièce ou dans le catalogue.</small></div>
+        <div id="objectProperties" class="hidden">
+          <div class="control-label">ÉLÉMENT SÉLECTIONNÉ</div><div class="selected-object-name" id="selectedName">Fauteuil gaming</div>
+          <label class="property-label" for="objectColor">Couleur</label><input id="objectColor" type="color" value="#d9b3d6">
+          <label class="property-label" for="objectScale">Taille <span id="scaleValue">100%</span></label><input id="objectScale" class="range-input" type="range" min="65" max="140" value="100">
+          <label class="property-label" for="objectRotation">Rotation <span id="rotationValue">0°</span></label><input id="objectRotation" class="range-input" type="range" min="0" max="355" step="5" value="0">
+          <div class="property-actions"><button class="subtle-button" id="duplicateBtn">Dupliquer</button><button class="danger-button" id="deleteBtn">Supprimer</button></div>
+          <p class="helper-copy">Déplace l'objet directement dans la scène avec la souris ou le doigt.</p>
+        </div>
       </div>
-      <div class="panel-bottom"><button class="export-button" id="exportBtn">↗ <span>Exporter ma chambre</span></button><p>DESIGNED TO FEEL LIKE YOURS <span>♡</span></p></div>
+      <div class="panel-bottom"><button class="export-button" id="exportBtn">↗ <span>Exporter ma chambre (JSON)</span></button><p>DESIGNED TO FEEL LIKE YOURS <span>♡</span></p></div>
     </aside>
   </main>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <footer class="footer"><span>GAMING ROOM STUDIO</span><span>DESIGN YOUR SPACE · 2026</span></footer>
+  <footer class="footer"><span>GAMING ROOM STUDIO</span><span>DESIGN YOUR SPACE · 3D</span></footer>
 </div>
 </body>
 </html>
