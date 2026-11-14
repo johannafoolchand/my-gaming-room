@@ -1,35 +1,91 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#f6b9d6"><meta name="description" content="Build your dream Y2K gaming room.">
-<title>My Gaming Room ✧ Y2K Edition</title><link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f1ee">
+  <meta name="description" content="Design your dream gaming room with a cosy Pinterest mood and a playful Y2K twist.">
+  <title>My Gaming Room — Make it yours</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="shell">
-<header class="topbar"><a class="brand" href="#"><span class="brand-icon">✿</span><span>MY GAMING ROOM<small>your little digital sanctuary</small></span></a><div class="top-actions"><span class="online"><i></i> ROOM ONLINE</span><button id="saveBtn" class="pill-button">♡ Save room</button></div></header>
-<main>
-<section class="intro"><div><p class="eyebrow">✧ THE ULTIMATE Y2K ROOM BUILDER ✧</p><h1>Make yourself<br><em>at home.</em></h1><p class="sub">A tiny corner of the internet, made entirely yours.</p></div><div class="sticker">100%<br><b>YOUR<br>VIBE</b> ✧</div></section>
-<section class="workspace">
-<div class="room-panel">
-<div class="room-toolbar"><div><span class="tiny-label">NOW PLAYING</span><strong id="roomName">My room</strong></div><div class="room-controls"><button id="lightsBtn" title="Toggle lights">☼ Lights on</button><button id="resetBtn" title="Reset room">↺ Reset</button></div></div>
-<div class="scene-wrap"><div class="scene" id="scene" aria-label="Isometric gaming room">
-<div class="wall wall-back"></div><div class="wall wall-left"></div><div class="floor"></div><div class="window"><div class="window-shine"></div><div class="window-cross"></div><span>✦ ✧ ✦</span></div>
-<div class="poster poster-one">GAME<br><b>OVER?</b><small>NO WAY!</small></div><div class="poster poster-two">★<br>GIRL<br>POWER</div><div class="shelf"><i>▰</i><i>▰</i><i>▰</i></div>
-<div class="desk"><div class="desk-top"></div><div class="desk-leg left"></div><div class="desk-leg right"></div></div><div class="monitor"><div class="monitor-screen"><span>♡</span><b>PRESS<br>START</b><small>PLAYER 1 READY</small></div><div class="monitor-neck"></div><div class="monitor-foot"></div></div>
-<div class="keyboard">▰ ▰ ▰ ▰ ▰ ▰ ▰</div><div class="mouse">◉</div><div class="pc-tower"><div class="pc-glass"><i></i><i></i><i></i></div><span>✧</span></div>
-<div class="chair"><div class="chair-back"></div><div class="chair-seat"></div><div class="chair-post"></div><div class="chair-base"></div></div><div class="plant">🌱</div><div class="plush">🐱</div><div class="console">▰<small>♡</small></div><div id="decorLayer"></div><div class="ambient-glow"></div>
-</div></div>
-<div class="room-footer"><span>✦ <b id="itemCount">8</b> items in your room</span><span class="hint">Drag decorations to move them · Save to keep your vibe</span></div>
+<div class="site-shell">
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="My Gaming Room home"><span class="brand-mark">m<span>✳</span></span><span class="brand-copy">my gaming room<small>YOUR SPACE, YOUR RULES</small></span></a>
+    <nav class="top-nav" aria-label="Main navigation"><a class="active" href="#studio">Studio</a><a href="#inspiration">The mood</a></nav>
+    <div class="top-actions"><span class="saved-status"><i></i> YOUR STUDIO</span><button id="saveBtn" class="save-button"><span>♡</span> Save room</button></div>
+  </header>
+
+  <main>
+    <section class="hero" id="inspiration">
+      <div class="hero-copy">
+        <p class="eyebrow"><span>✳</span> YOUR PERSONAL ROOM DESIGNER</p>
+        <h1>A room that feels<br>like <em>you.</em></h1>
+        <p class="hero-sub">Cosy corners, glossy details and a little Y2K nostalgia. Make your dream gaming space a reality.</p>
+        <div class="hero-meta"><span class="meta-line"></span><span>01 / DESIGN YOUR HAPPY PLACE</span></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="hero-disc"><span>PLAY<br>YOUR<br>WORLD</span><i>✳</i></div><span class="hero-note note-one">a little dreamy ♡</span><span class="hero-note note-two">EST. 2004</span><span class="hero-star">✧</span></div>
+    </section>
+
+    <section class="studio-layout" id="studio">
+      <div class="preview-column">
+        <div class="section-heading"><div><p class="eyebrow">THE PREVIEW</p><h2>Your little universe</h2></div><span class="live-tag"><i></i> LIVE CANVAS</span></div>
+        <div class="room-card">
+          <div class="room-toolbar"><div class="room-title"><span class="room-icon">✳</span><div><small>NOW DESIGNING</small><strong id="roomName">My room</strong></div></div><div class="room-controls"><button id="lightsBtn" title="Toggle lights">☼ <span>Lights on</span></button><button id="resetBtn" title="Reset room">↺ <span>Reset</span></button></div></div>
+          <div class="scene-wrap"><div class="scene" id="scene" aria-label="Your customisable gaming room">
+            <div class="wall wall-back"></div><div class="wall wall-left"></div><div class="floor"></div>
+            <div class="window"><div class="window-sky"></div><div class="window-cross"></div><span>✦ &nbsp; ✧ &nbsp; ✦</span></div>
+            <div class="poster poster-one"><small>GOOD VIBES</small><b>ONLY</b><span>♡</span></div><div class="poster poster-two"><span>★</span><b>GAME<br>GIRL</b></div>
+            <div class="shelf"><i>▰</i><i>▰</i><i>▰</i></div>
+            <div class="desk"><div class="desk-top"></div><div class="desk-leg left"></div><div class="desk-leg right"></div></div>
+            <div class="monitor"><div class="monitor-screen"><span>♡</span><b>PRESS<br>START</b><small>PLAYER 1 READY</small></div><div class="monitor-neck"></div><div class="monitor-foot"></div></div>
+            <div class="keyboard">▰ ▰ ▰ ▰ ▰ ▰ ▰</div><div class="mouse">◉</div>
+            <div class="pc-tower"><div class="pc-glass"><i></i><i></i><i></i></div><span>✧</span></div>
+            <div class="chair"><div class="chair-back"></div><div class="chair-seat"></div><div class="chair-post"></div><div class="chair-base"></div></div>
+            <div class="plant">🌿</div><div class="plush">🐱</div><div class="console">▰<small>♡</small></div>
+            <div id="decorLayer"></div><div class="ambient-glow"></div>
+          </div></div>
+          <div class="room-footer"><span><b id="itemCount">8</b> pieces in your space</span><span class="drag-hint">Drag to move · Double-click to remove</span></div>
+        </div>
+        <div class="preview-caption"><span>✧</span> A space for late-night quests and slow mornings.</div>
+      </div>
+
+      <aside class="customizer">
+        <div class="customizer-heading"><div><p class="eyebrow">MAKE IT YOURS</p><h2>The details</h2></div><span class="chrome-flower">✳</span></div>
+        <div class="tab-row"><button class="tab active" data-tab="themes">Atmosphere</button><button class="tab" data-tab="decor">Decor</button><button class="tab" data-tab="setup">My setup</button></div>
+        <div id="themes" class="tab-content active">
+          <p class="section-label">01 — CHOOSE YOUR PALETTE</p>
+          <div class="swatches">
+            <button class="swatch selected" data-theme="bubblegum"><i style="background:linear-gradient(135deg,#f4c7d8,#c9b2df)"></i><span>Rosy dream</span></button>
+            <button class="swatch" data-theme="lavender"><i style="background:linear-gradient(135deg,#c5b6e7,#e6d7ed)"></i><span>Lavender haze</span></button>
+            <button class="swatch" data-theme="cherry"><i style="background:linear-gradient(135deg,#e9a0a7,#f4d1c8)"></i><span>Cherry cola</span></button>
+            <button class="swatch" data-theme="aqua"><i style="background:linear-gradient(135deg,#a9d5d6,#d2e5e9)"></i><span>Blue hour</span></button>
+          </div>
+          <p class="section-label floor-label">02 — UNDER YOUR FEET</p>
+          <div class="floor-options"><button class="floor-choice selected" data-floor="wood">⌁ &nbsp; Blush wood</button><button class="floor-choice" data-floor="checker">▦ &nbsp; Retro checker</button><button class="floor-choice" data-floor="carpet">✿ &nbsp; Soft carpet</button></div>
+        </div>
+        <div id="decor" class="tab-content">
+          <p class="section-label">03 — ADD YOUR SIGNATURE</p>
+          <div class="decor-grid"><button class="decor-item" data-item="heart"><span>♡</span>Heart</button><button class="decor-item" data-item="star"><span>✦</span>Star</button><button class="decor-item" data-item="bow"><span>🎀</span>Bow</button><button class="decor-item" data-item="flower"><span>✿</span>Flower</button><button class="decor-item" data-item="disc"><span>◉</span>CD</button><button class="decor-item" data-item="bear"><span>🧸</span>Bear</button><button class="decor-item" data-item="lamp"><span>✧</span>Disco</button><button class="decor-item" data-item="candy"><span>♡</span>Candy</button></div>
+          <p class="microcopy">Tap to add a detail. Drag it around your room, or double-click to remove it.</p>
+        </div>
+        <div id="setup" class="tab-content">
+          <p class="section-label">04 — YOUR GAMING CORNER</p>
+          <label class="field-label" for="setupName">Give your room a name</label><input id="setupName" maxlength="28" value="My room" placeholder="Name your room">
+          <label class="field-label" for="consoleSelect">Your main console</label><select id="consoleSelect"><option>PlayStation 5</option><option>Nintendo Switch</option><option>PC Gaming</option><option>Xbox Series X</option><option>Retro collection</option></select>
+          <label class="field-label" for="ledColor">Ambient light colour</label><input id="ledColor" type="color" value="#d88fbd">
+          <p class="microcopy">Your room settings stay saved on this device when you choose Save room.</p>
+        </div>
+        <div class="custom-bottom"><button id="exportBtn" class="export-button"><span>↗</span> Export your room</button><p>DESIGNED WITH <span>♡</span> & A LITTLE NOSTALGIA</p></div>
+      </aside>
+    </section>
+  </main>
+  <footer class="site-footer"><span>MY GAMING ROOM <b>© 2026</b></span><span>MAKE SPACE FOR YOURSELF <i>✳</i></span></footer>
 </div>
-<aside class="customizer"><div class="custom-head"><div><p class="tiny-label">ROOM STUDIO</p><h2>Customize it</h2></div><span class="sparkle">✧</span></div>
-<div class="tab-row"><button class="tab active" data-tab="themes">Themes</button><button class="tab" data-tab="decor">Decor</button><button class="tab" data-tab="setup">Setup</button></div>
-<div id="themes" class="tab-content active"><p class="section-label">PICK YOUR WALLPAPER</p><div class="swatches">
-<button class="swatch selected" data-theme="bubblegum"><i style="background:linear-gradient(135deg,#f5a6cb,#d7a5ed)"></i><span>Bubblegum</span></button><button class="swatch" data-theme="lavender"><i style="background:linear-gradient(135deg,#b9a5e9,#d8c9f2)"></i><span>Lavender</span></button><button class="swatch" data-theme="cherry"><i style="background:linear-gradient(135deg,#f18c9e,#f8c4c8)"></i><span>Cherry</span></button><button class="swatch" data-theme="aqua"><i style="background:linear-gradient(135deg,#9bd9d9,#b5d9f1)"></i><span>Baby blue</span></button></div>
-<p class="section-label">FLOOR STYLE</p><div class="floor-options"><button class="floor-choice selected" data-floor="wood">♡ Pink wood</button><button class="floor-choice" data-floor="checker">▦ Checker</button><button class="floor-choice" data-floor="carpet">✿ Soft carpet</button></div></div>
-<div id="decor" class="tab-content"><p class="section-label">ADD A LITTLE SOMETHING</p><div class="decor-grid"><button class="decor-item" data-item="heart"><span>💗</span>Heart</button><button class="decor-item" data-item="star"><span>⭐</span>Star</button><button class="decor-item" data-item="bow"><span>🎀</span>Bow</button><button class="decor-item" data-item="flower"><span>🌸</span>Flower</button><button class="decor-item" data-item="disc"><span>💿</span>CD</button><button class="decor-item" data-item="bear"><span>🧸</span>Bear</button><button class="decor-item" data-item="lamp"><span>🪩</span>Disco</button><button class="decor-item" data-item="candy"><span>🍬</span>Candy</button></div><p class="microcopy">Tap an item to add it to your room. Drag it wherever you like.</p></div>
-<div id="setup" class="tab-content"><p class="section-label">YOUR GAMING GEAR</p><label class="field-label" for="setupName">Setup name</label><input id="setupName" maxlength="28" value="My room" placeholder="Name your room"><label class="field-label" for="consoleSelect">Main console</label><select id="consoleSelect"><option>PlayStation 5</option><option>Nintendo Switch</option><option>PC Gaming</option><option>Xbox Series X</option><option>Retro collection</option></select><label class="field-label" for="ledColor">LED glow</label><input id="ledColor" type="color" value="#ff7bc8"><p class="microcopy">Your setup details are saved with your room on this device.</p></div>
-<div class="custom-bottom"><button id="exportBtn" class="export-button">⇧ Export my room</button><p>made with <span>♡</span> and a little nostalgia</p></div></aside>
-</section><footer><span>MY GAMING ROOM © 2004–FOREVER</span><span>BEST VIEWED WITH A DREAMY IMAGINATION ✧</span></footer>
-</main></div><div id="toast" role="status" aria-live="polite"></div><script src="app.js"></script>
-</body></html>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="app.js"></script>
+</body>
+</html>
