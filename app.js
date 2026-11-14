@@ -8,7 +8,7 @@ function notify(message){toast.textContent=message;toast.classList.add('show');c
 function persist(){try{localStorage.setItem('gamingRoomStudio',JSON.stringify(state));localStorage.setItem('gamingRoomSaved',JSON.stringify(savedRooms))}catch{}}
 function updateSceneLighting(){
  const theme=themes[state.theme]||themes.y2k;
- const finishFilter=state.finish==='dark'?'brightness(.9) saturate(.9)':state.finish==='soft'?'brightness(1.12) saturate(.88)':'brightness(1.04) saturate(1.02)';
+ const finishFilter=state.finish==='dark'?'brightness(.82) saturate(.78) contrast(1.08)':state.finish==='soft'?'brightness(1.12) saturate(.78)':'brightness(1.04) saturate(1.02)';
  const lightLevel=state.lights?(1.02+Number(state.intensity||0)/500):.58;
  image.style.filter=(theme.filter||'')+' '+finishFilter+' brightness('+lightLevel+')';
 }
@@ -41,7 +41,7 @@ $$('.nav-link').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view
 $$('[data-object]').forEach(b=>b.addEventListener('click',()=>addObject(b.dataset.object)));
 $$('[data-theme]').forEach(b=>b.addEventListener('click',()=>{state.theme=b.dataset.theme;state.color=themes[state.theme].color;apply();persist()}));
 $$('[data-color]').forEach(b=>b.addEventListener('click',()=>{state.color=b.dataset.color;apply();persist()}));
-$$('[data-finish]').forEach(b=>b.addEventListener('click',()=>{state.finish=b.dataset.finish;$$('[data-finish]').forEach(x=>x.classList.toggle('selected',x===b));persist();notify('Finition sélectionnée : '+b.textContent.trim())}));
+$('[data-finish]').forEach(b=>b.addEventListener('click',()=>{state.finish=b.dataset.finish;apply();persist();notify('Décor du sol modifié : '+b.textContent.trim())}));
 $$('[data-panel]').forEach(b=>b.addEventListener('click',()=>{$$('[data-panel]').forEach(x=>x.classList.toggle('active',x===b));$$('.panel-content').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel))}));
 $$('[data-ambience]').forEach(b=>b.addEventListener('click',()=>{state.ambience=b.dataset.ambience;apply();persist()}));
 $('#saveBtn').addEventListener('click',saveRoom);$('#resetBtn').addEventListener('click',resetRoom);
@@ -52,6 +52,6 @@ $('#fullscreenBtn').addEventListener('click',()=>{if(scene.requestFullscreen)sce
 let zoom=1;function setZoom(v){zoom=Math.max(.85,Math.min(1.25,v));image.style.transform='scale('+zoom+')';$('#zoomValue').textContent=Math.round(zoom*100)+'%'}$('#zoomIn').addEventListener('click',()=>setZoom(zoom+.05));$('#zoomOut').addEventListener('click',()=>setZoom(zoom-.05));
 $('#exportBtn').addEventListener('click',async()=>{try{if(typeof html2canvas!=='function')throw new Error('Export library unavailable');const canvas=await html2canvas(scene,{useCORS:true,allowTaint:false,backgroundColor:'#211827',scale:2});const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='my-gaming-room.png';a.click();notify('Image de ta chambre exportée')}catch{const blob=new Blob([JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='gaming-room-design.json';a.click();URL.revokeObjectURL(url);notify('Export image indisponible : configuration JSON téléchargée')}});
 $('#settingsBtn').addEventListener('click',()=>{document.querySelector('[data-panel="ambience"]').click();$('#ambience').scrollIntoView({behavior:'smooth',block:'nearest'})});
-$$('[data-category]').forEach(b=>b.addEventListener('click',()=>{$$('[data-category]').forEach(x=>x.classList.toggle('active',x===b));const cat=b.dataset.category;$$('[data-object]').forEach(card=>{const key=card.dataset.object;const category=objects[key][1].toLowerCase();card.style.display=cat==='all'||(cat==='furniture'&&['chair','desk'].includes(key))||(cat==='gaming'&&category==='setup')||(cat==='lighting'&&category==='éclairage')||(cat==='decor'&&['décor','textile'].includes(category))||(cat==='plants'&&key==='plant')||(cat==='walls'&&key==='rug')?'':'none'})}));
+$('[data-category]').forEach(b=>b.addEventListener('click',()=>{$('[data-category]').forEach(x=>x.classList.toggle('active',x===b));const cat=b.dataset.category;$('[data-object]').forEach(card=>{const key=card.dataset.object;const category=objects[key][1].toLowerCase();const visible=cat==='all'||(cat==='furniture'&&['chair','desk'].includes(key))||(cat==='gaming'&&category==='setup')||(cat==='lighting'&&category==='éclairage')||(cat==='decor'&&['décor','textile'].includes(category))||(cat==='plants'&&key==='plant')||(cat==='walls'&&key==='rug');card.hidden=!visible});$('#cataloguePanel').scrollIntoView({behavior:'smooth',block:'nearest'});notify('Catalogue : '+b.textContent.trim())}));
 try{const saved=JSON.parse(localStorage.getItem('gamingRoomStudio'));if(saved)state={...defaults,...saved,objects:Array.isArray(saved.objects)?saved.objects.slice(0,20):[]};const collection=JSON.parse(localStorage.getItem('gamingRoomSaved'));if(Array.isArray(collection))savedRooms=collection.slice(0,12)}catch{state={...defaults,objects:[]};savedRooms=[]}
 apply();setView('studio');
