@@ -79,3 +79,9 @@
 .room-thumb-neon{background-image:url('https://images.unsplash.com/photo-1593062096033-9a26b09da705?auto=format&fit=crop&w=400&q=80')}
 .room-scene-choice b{display:block;font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:700px){.room-scene-thumb{height:42px}.room-scene-choice b{font-size:7px}}
+
+
+/* Keep the full object catalogue available on compact screens */
+@media(max-width:1250px){.object-card:nth-child(n+5){display:flex}}
+.thumb-shelf{background:linear-gradient(180deg,transparent 28%,#d8c1df 29% 34%,transparent 35% 68%,#d8c1df 69% 74%,transparent 75%),linear-gradient(90deg,#4c344f,#261c32)}
+.thumb-headset{background:radial-gradient(circle at 50% 45%,transparent 0 23%,#e9c8ee 24% 34%,transparent 35%),linear-gradient(145deg,#523b65,#241b30)}
