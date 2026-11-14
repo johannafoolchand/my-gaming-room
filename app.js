@@ -1,74 +1,45 @@
-const scene=document.getElementById('scene');
-const decorLayer=document.getElementById('decorLayer');
-const toast=document.getElementById('toast');
-const themes={bubblegum:['#f7c4dd','#efadd0','#dca0bf','#c77fa8','#ff7bc8'],lavender:['#d6c8ed','#bba8df','#c6b6dd','#a18bc6','#c5a2ff'],cherry:['#f7c0c7','#ed9eaa','#e4a2ad','#c77b8d','#ff879f'],aqua:['#c4e5e8','#9ed5da','#a8d5df','#7eb5c5','#79dce1']};
-const defaults={theme:'bubblegum',floor:'wood',lights:true,roomName:'My room',console:'PlayStation 5',led:'#d88fbd',decor:[]};
-const furniture={
- chair:{emoji:'🪑',label:'Gaming chair'},desk:{emoji:'🖥️',label:'Desk setup'},monitor:{emoji:'🖥️',label:'Monitor'},pc:{emoji:'🖥️',label:'RGB PC'},lamp:{emoji:'🍄',label:'Lamp'},shelf:{emoji:'🪴',label:'Shelf'},plant:{emoji:'🌿',label:'Plant'},poster:{emoji:'🖼️',label:'Poster'},rug:{emoji:'☁️',label:'Rug'},plush:{emoji:'🧸',label:'Plush'}
-};
-let state={...defaults};
-function notify(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(notify.timer);notify.timer=setTimeout(()=>toast.classList.remove('show'),2200)}
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const scene=$('#roomScene'), image=$('#sceneImage'), objectLayer=$('#objectLayer'), toast=$('#toast');
+const themes={y2k:{name:'Y2K DREAM',color:'#ed82cf',filter:'saturate(1.08) hue-rotate(0deg)'},cyber:{name:'CYBER GLOW',color:'#9b82f2',filter:'saturate(1.2) hue-rotate(25deg) brightness(.82)'},cozy:{name:'COZY PINK',color:'#e8a0c6',filter:'saturate(.9) sepia(.12)'},minimal:{name:'MINIMAL',color:'#c4b5ce',filter:'saturate(.55) brightness(1.08)'},nature:{name:'NATURE GAMER',color:'#87bd9b',filter:'hue-rotate(65deg) saturate(.75)'},galaxy:{name:'GALAXY',color:'#8b83f3',filter:'hue-rotate(35deg) saturate(1.3)'}};
+const objects={chair:['Fauteuil gaming','ASSISE'],desk:['Bureau minimal','MOBILIER'],monitor:['Écran ultra-wide','SETUP'],pc:['PC RGB','SETUP'],lamp:["Lampe d'ambiance",'ÉCLAIRAGE'],plant:['Plante suspendue','DÉCOR'],poster:['Affiche artistique','DÉCOR'],rug:['Tapis fluffy','TEXTILE'],shelf:['Étagère murale','DÉCOR'],headset:['Casque gaming','SETUP']};
+const defaults={theme:'y2k',color:'#ed82cf',finish:'wood',lights:true,intensity:70,ambience:'static',roomName:'My dream room',objects:[]};
+let state={...defaults,objects:[]},savedRooms=[];
+function notify(message){toast.textContent=message;toast.classList.add('show');clearTimeout(notify.timer);notify.timer=setTimeout(()=>toast.classList.remove('show'),2200)}
+function persist(){try{localStorage.setItem('gamingRoomStudio',JSON.stringify(state));localStorage.setItem('gamingRoomSaved',JSON.stringify(savedRooms))}catch{}}
 function apply(){
- const t=themes[state.theme]||themes.bubblegum;
- ['--wall1','--wall2','--floor1','--floor2','--accent'].forEach((k,i)=>scene.style.setProperty(k,t[i]));
- scene.style.setProperty('--accent',state.led||t[4]);scene.classList.toggle('lights-off',!state.lights);
- document.getElementById('roomName').textContent=state.roomName;
- document.getElementById('setupName').value=state.roomName;
- document.getElementById('consoleSelect').value=state.console;
- document.getElementById('ledColor').value=state.led;
- document.querySelectorAll('[data-theme]').forEach(b=>b.classList.toggle('selected',b.dataset.theme===state.theme));
- document.querySelectorAll('[data-floor]').forEach(b=>b.classList.toggle('selected',b.dataset.floor===state.floor));
- document.getElementById('lightsBtn').textContent=state.lights?'☼ Lights on':'☾ Lights off';
- scene.dataset.floor=state.floor;renderDecor();
+ const theme=themes[state.theme]||themes.y2k;document.documentElement.style.setProperty('--accent',state.color||theme.color);
+ image.style.filter=(theme.filter||'')+(state.lights?'':' brightness(.55)');
+ scene.classList.toggle('lights-off',!state.lights);scene.classList.remove('ambience-rainbow','ambience-pulse','ambience-breathe');if(state.ambience!=='static')scene.classList.add('ambience-'+state.ambience);
+ scene.style.setProperty('--zoom',1);$('#styleName').textContent=theme.name;$('#sceneRoomName').textContent=(state.roomName||'MY DREAM ROOM').toUpperCase();
+ $('#roomNameInput').value=state.roomName;$('#intensity').value=state.intensity;$('#intensityLabel').textContent=state.intensity+'%';
+ $('#toggleLights').textContent=state.lights?'☼ Lumières ON':'☾ Lumières OFF';$('#toggleLights').setAttribute('aria-pressed',String(state.lights));
+ $$('.theme-choice').forEach(b=>b.classList.toggle('selected',b.dataset.theme===state.theme));$$('.color-swatch').forEach(b=>b.classList.toggle('selected',b.dataset.color===state.color));$$('.finish-choice').forEach(b=>b.classList.toggle('selected',b.dataset.finish===state.finish));$$('.ambience-choice').forEach(b=>b.classList.toggle('active',b.dataset.ambience===state.ambience));
+ $('.toggle-switch').classList.toggle('on',state.lights);renderObjects();renderSaved();
 }
-function renderDecor(){
- decorLayer.innerHTML='';
- state.decor.forEach((item,index)=>{
-  const el=document.createElement('button');el.type='button';el.className='room-object '+(item.kind||'detail');
-  el.textContent=item.emoji;el.setAttribute('aria-label',(item.label||'Room item')+'. Drag to move; double-click to remove');
-  el.title=(item.label||'Room item')+' — drag to move, double-click to remove';
-  el.style.left=item.x+'%';el.style.top=item.y+'%';el.dataset.index=index;
-  el.addEventListener('pointerdown',startDrag);el.addEventListener('dblclick',()=>{state.decor.splice(Number(el.dataset.index),1);renderDecor();notify('Item removed');});
-  decorLayer.appendChild(el);
- });
- document.getElementById('itemCount').textContent=8+state.decor.length;
-}
-const icons={heart:'♡',star:'✦',bow:'🎀',flower:'✿',disc:'◉',bear:'🧸',lamp:'✧',candy:'♡'};
-let activeDrag=null;
-function startDrag(e){
- e.preventDefault();const el=e.currentTarget;const id=Number(el.dataset.index);
- activeDrag={el,id,pointer:e.pointerId};el.setPointerCapture(e.pointerId);
- el.addEventListener('pointermove',moveDrag);el.addEventListener('pointerup',endDrag,{once:true});el.addEventListener('pointercancel',endDrag,{once:true});
-}
-function moveDrag(e){
- if(!activeDrag)return;const rect=scene.getBoundingClientRect();const item=state.decor[activeDrag.id];if(!item)return;
- item.x=Math.max(1,Math.min(94,(e.clientX-rect.left)/rect.width*100));item.y=Math.max(1,Math.min(88,(e.clientY-rect.top)/rect.height*100));
- activeDrag.el.style.left=item.x+'%';activeDrag.el.style.top=item.y+'%';
-}
-function endDrag(){if(activeDrag){activeDrag.el.removeEventListener('pointermove',moveDrag);activeDrag=null;}}
-function addItem(key){
- const item=furniture[key];if(!item)return;
- const offset=state.decor.length%5;
- state.decor.push({kind:'furniture',key,emoji:item.emoji,label:item.label,x:35+offset*7,y:38+offset*5});
- renderDecor();notify(item.label+' added — drag it into place');
-}
-document.querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click',()=>{
- document.querySelectorAll('.tab,.tab-content').forEach(el=>el.classList.remove('active'));
- btn.classList.add('active');document.getElementById(btn.dataset.tab).classList.add('active');
-}));
-document.querySelectorAll('[data-theme]').forEach(btn=>btn.addEventListener('click',()=>{state.theme=btn.dataset.theme;apply();}));
-document.querySelectorAll('[data-floor]').forEach(btn=>btn.addEventListener('click',()=>{state.floor=btn.dataset.floor;apply();}));
-document.querySelectorAll('[data-item]').forEach(btn=>btn.addEventListener('click',()=>{const key=btn.dataset.item;state.decor.push({kind:'detail',emoji:icons[key],label:key,x:42+Math.random()*18,y:28+Math.random()*25});renderDecor();}));
-document.querySelectorAll('[data-furniture]').forEach(btn=>btn.addEventListener('click',()=>addItem(btn.dataset.furniture)));
-document.getElementById('lightsBtn').addEventListener('click',()=>{state.lights=!state.lights;apply();});
-document.getElementById('setupName').addEventListener('input',e=>{state.roomName=e.target.value.slice(0,28);document.getElementById('roomName').textContent=state.roomName;});
-document.getElementById('consoleSelect').addEventListener('change',e=>state.console=e.target.value);
-document.getElementById('ledColor').addEventListener('input',e=>{state.led=e.target.value;apply();});
-document.getElementById('saveBtn').addEventListener('click',()=>{try{localStorage.setItem('myGamingRoom',JSON.stringify(state));notify('Room saved on this device');}catch{notify('Saving is unavailable in this browser.');}});
-document.getElementById('resetBtn').addEventListener('click',()=>{state={...defaults,decor:[]};try{localStorage.removeItem('myGamingRoom');}catch{}apply();notify('Room reset');});
-document.getElementById('exportBtn').addEventListener('click',()=>{
- const data={...state,decor:state.decor};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
- const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='my-gaming-room.json';a.click();URL.revokeObjectURL(url);notify('Room design exported');
-});
-try{const saved=localStorage.getItem('myGamingRoom');if(saved){const parsed=JSON.parse(saved);state={...defaults,...parsed,decor:Array.isArray(parsed.decor)?parsed.decor:[]};}}catch{state={...defaults};}
-apply();
+function renderObjects(){objectLayer.innerHTML='';state.objects.forEach((item,index)=>{const el=document.createElement('button');el.className='placed-object';el.type='button';el.style.left=item.x+'%';el.style.top=item.y+'%';el.dataset.index=index;el.innerHTML='<span>'+item.label+'</span><small>'+item.category+'</small>';el.setAttribute('aria-label',item.label+', glisser pour déplacer, double-cliquer pour supprimer');el.addEventListener('pointerdown',startDrag);el.addEventListener('dblclick',()=>{state.objects.splice(index,1);renderObjects();persist();notify(item.label+' supprimé')});objectLayer.appendChild(el)});$('#objectCount').textContent=state.objects.length}
+function addObject(key){const data=objects[key];if(!data)return;const n=state.objects.length;state.objects.push({key,label:data[0],category:data[1],x:20+(n%4)*17,y:35+Math.floor(n/4)*13});renderObjects();persist();notify(data[0]+' ajouté — déplace-le dans la scène')}
+let drag=null;function startDrag(e){e.preventDefault();const el=e.currentTarget;drag={el,index:Number(el.dataset.index),pointer:e.pointerId};el.setPointerCapture(e.pointerId);el.addEventListener('pointermove',moveDrag);el.addEventListener('pointerup',endDrag,{once:true});el.addEventListener('pointercancel',endDrag,{once:true})}
+function moveDrag(e){if(!drag)return;const r=scene.getBoundingClientRect(),item=state.objects[drag.index];if(!item)return;item.x=Math.max(1,Math.min(88,(e.clientX-r.left)/r.width*100));item.y=Math.max(3,Math.min(88,(e.clientY-r.top)/r.height*100));drag.el.style.left=item.x+'%';drag.el.style.top=item.y+'%'}
+function endDrag(){if(drag){drag.el.removeEventListener('pointermove',moveDrag);drag=null;persist()}}
+function setView(view){$$('.nav-link').forEach(b=>b.classList.toggle('active',b.dataset.view===view));$('#cataloguePanel').classList.toggle('hidden',view!=='studio'&&view!=='catalogue');$('#inspirationPanel').classList.toggle('hidden',view!=='inspirations');$('#savedPanel').classList.toggle('hidden',view!=='saved');$('#pageTitle').innerHTML=({studio:'Ma chambre <span>✦</span>',catalogue:'Catalogue <span>✦</span>',inspirations:'Inspirations <span>✦</span>',saved:'Mes sauvegardes <span>✦</span>'})[view];if(view==='catalogue')$('#cataloguePanel').scrollIntoView({behavior:'smooth',block:'start'})}
+function renderSaved(){const root=$('#savedRooms');$('#savedCount').textContent=savedRooms.length;root.innerHTML='';if(!savedRooms.length){root.innerHTML='<div class="empty-state">Aucune chambre sauvegardée pour le moment.<br>Enregistre ton premier univers pour le retrouver ici.</div>';return}savedRooms.forEach((room,i)=>{const card=document.createElement('div');card.className='saved-room';const info=document.createElement('div'),title=document.createElement('b'),meta=document.createElement('small');title.textContent=room.roomName;meta.textContent=themes[room.theme]?.name+' · '+room.objects.length+' objets';info.append(title,meta);const actions=document.createElement('div'),load=document.createElement('button'),del=document.createElement('button');load.textContent='Ouvrir';del.textContent='✕';load.addEventListener('click',()=>{state={...defaults,...room,objects:room.objects||[]};apply();persist();setView('studio');notify('Chambre chargée')});del.addEventListener('click',()=>{savedRooms.splice(i,1);persist();renderSaved()});actions.append(load,del);card.append(info,actions);root.append(card)})}
+function saveRoom(){const snapshot=JSON.parse(JSON.stringify(state));snapshot.savedAt=new Date().toISOString();savedRooms.unshift(snapshot);savedRooms=savedRooms.slice(0,12);persist();renderSaved();notify('Chambre enregistrée sur cet appareil')}
+function resetRoom(){state={...defaults,objects:[]};apply();persist();notify('Studio réinitialisé')}
+$$('.nav-link').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));$$('[data-view="catalogue"]').forEach(b=>b.addEventListener('click',()=>setView('catalogue')));
+$$('[data-object]').forEach(b=>b.addEventListener('click',()=>addObject(b.dataset.object)));
+$$('[data-theme]').forEach(b=>b.addEventListener('click',()=>{state.theme=b.dataset.theme;state.color=themes[state.theme].color;apply();persist()}));
+$$('[data-color]').forEach(b=>b.addEventListener('click',()=>{state.color=b.dataset.color;apply();persist()}));
+$$('[data-finish]').forEach(b=>b.addEventListener('click',()=>{state.finish=b.dataset.finish;$$('[data-finish]').forEach(x=>x.classList.toggle('selected',x===b));persist();notify('Finition sélectionnée : '+b.textContent.trim())}));
+$$('[data-panel]').forEach(b=>b.addEventListener('click',()=>{$$('[data-panel]').forEach(x=>x.classList.toggle('active',x===b));$$('.panel-content').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel))}));
+$$('[data-ambience]').forEach(b=>b.addEventListener('click',()=>{state.ambience=b.dataset.ambience;apply();persist()}));
+$('#saveBtn').addEventListener('click',saveRoom);$('#resetBtn').addEventListener('click',resetRoom);
+$('#toggleLights').addEventListener('click',()=>{state.lights=!state.lights;apply();persist()});$('#lightMode').addEventListener('click',()=>{state.lights=!state.lights;apply();persist()});
+$('#roomNameInput').addEventListener('input',e=>{state.roomName=e.target.value.slice(0,28);$('#sceneRoomName').textContent=state.roomName.toUpperCase();persist()});
+$('#intensity').addEventListener('input',e=>{state.intensity=Number(e.target.value);$('#intensityLabel').textContent=state.intensity+'%';scene.style.setProperty('--led-opacity',state.intensity/100);persist()});
+$('#fullscreenBtn').addEventListener('click',()=>{if(scene.requestFullscreen)scene.requestFullscreen().catch(()=>notify('Plein écran indisponible'))});
+let zoom=1;function setZoom(v){zoom=Math.max(.85,Math.min(1.25,v));image.style.transform='scale('+zoom+')';$('#zoomValue').textContent=Math.round(zoom*100)+'%'}$('#zoomIn').addEventListener('click',()=>setZoom(zoom+.05));$('#zoomOut').addEventListener('click',()=>setZoom(zoom-.05));
+$('#exportBtn').addEventListener('click',()=>{const data={...state,exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='gaming-room-design.json';a.click();URL.revokeObjectURL(url);notify('Configuration exportée en JSON')});
+$('#settingsBtn').addEventListener('click',()=>{document.querySelector('[data-panel="ambience"]').click();$('#ambience').scrollIntoView({behavior:'smooth',block:'nearest'})});
+$$('[data-category]').forEach(b=>b.addEventListener('click',()=>{$$('[data-category]').forEach(x=>x.classList.toggle('active',x===b));const cat=b.dataset.category;$$('[data-object]').forEach(card=>{const key=card.dataset.object;const category=objects[key][1].toLowerCase();card.style.display=cat==='all'||(cat==='furniture'&&['chair','desk'].includes(key))||(cat==='gaming'&&category==='setup')||(cat==='lighting'&&category==='éclairage')||(cat==='decor'&&['décor','textile'].includes(category))||(cat==='plants'&&key==='plant')||(cat==='walls'&&key==='rug')?'':'none'})}));
+try{const saved=JSON.parse(localStorage.getItem('gamingRoomStudio'));if(saved)state={...defaults,...saved,objects:Array.isArray(saved.objects)?saved.objects:[]};const collection=JSON.parse(localStorage.getItem('gamingRoomSaved'));if(Array.isArray(collection))savedRooms=collection}catch{}
+apply();setView('studio');
