@@ -2,8 +2,9 @@ const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelect
 const scene=$('#roomScene'), image=$('#sceneImage'), objectLayer=$('#objectLayer'), toast=$('#toast');
 const themes={y2k:{name:'Y2K DREAM',color:'#ed82cf',filter:'saturate(1.08) hue-rotate(0deg)'},cyber:{name:'CYBER GLOW',color:'#9b82f2',filter:'saturate(1.2) hue-rotate(25deg) brightness(.82)'},cozy:{name:'COZY PINK',color:'#e8a0c6',filter:'saturate(.9) sepia(.12)'},minimal:{name:'MINIMAL',color:'#c4b5ce',filter:'saturate(.55) brightness(1.08)'},nature:{name:'NATURE GAMER',color:'#87bd9b',filter:'hue-rotate(65deg) saturate(.75)'},galaxy:{name:'GALAXY',color:'#8b83f3',filter:'hue-rotate(35deg) saturate(1.3)'}};
 const objects={chair:['Fauteuil gaming','ASSISE'],desk:['Bureau minimal','MOBILIER'],monitor:['Écran ultra-wide','SETUP'],pc:['PC RGB','SETUP'],lamp:["Lampe d'ambiance",'ÉCLAIRAGE'],plant:['Plante suspendue','DÉCOR'],poster:['Affiche artistique','DÉCOR'],rug:['Tapis fluffy','TEXTILE'],shelf:['Étagère murale','DÉCOR'],headset:['Casque gaming','SETUP']};
+const roomScenes={gaming:"https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=1900&q=90",cozy:"https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1900&q=90",neon:"https://images.unsplash.com/photo-1593062096033-9a26b09da705?auto=format&fit=crop&w=1900&q=90"};
 const games={spiderman:{title:'MARVEL’S SPIDER-MAN 2',subtitle:'NEW YORK · TWO SPIDERS. ONE CITY.'},godofwar:{title:'GOD OF WAR RAGNARÖK',subtitle:'FATE · FAMILY · THE NINE REALMS'},horizon:{title:'HORIZON FORBIDDEN WEST',subtitle:'EXPLORE A WORLD REBORN'},gt7:{title:'GRAN TURISMO 7',subtitle:'THE REAL DRIVING SIMULATOR'},astrobot:{title:'ASTRO BOT',subtitle:'A GALACTIC ADVENTURE'},tlou:{title:'THE LAST OF US PART II',subtitle:'SURVIVE · ENDURE'}};
-const defaults={theme:'y2k',color:'#ed82cf',finish:'wood',lights:true,intensity:70,ambience:'static',game:'spiderman',roomName:'My dream room',objects:[]};
+const defaults={theme:'y2k',color:'#ed82cf',finish:'wood',roomScene:'gaming',lights:true,intensity:70,ambience:'static',game:'spiderman',roomName:'My dream room',objects:[]};
 let state={...defaults,objects:[]},savedRooms=[];
 function notify(message){toast.textContent=message;toast.classList.add('show');clearTimeout(notify.timer);notify.timer=setTimeout(()=>toast.classList.remove('show'),2200)}
 function persist(){try{localStorage.setItem('gamingRoomStudio',JSON.stringify(state));localStorage.setItem('gamingRoomSaved',JSON.stringify(savedRooms))}catch{}}
@@ -17,6 +18,8 @@ function apply(){
  const theme=themes[state.theme]||themes.y2k;document.documentElement.style.setProperty('--accent',state.color||theme.color);
  setGame(state.game||'spiderman');
  updateSceneLighting();
+ image.style.backgroundImage='url("'+(roomScenes[state.roomScene]||roomScenes.gaming)+'")';
+ $('[data-room-scene]').forEach(b=>b.classList.toggle('selected',b.dataset.roomScene===(state.roomScene||'gaming')));
  scene.classList.toggle('lights-off',!state.lights);scene.dataset.finish=state.finish;scene.style.setProperty('--led-opacity',state.intensity/100);scene.classList.remove('ambience-rainbow','ambience-pulse','ambience-breathe');if(state.ambience!=='static')scene.classList.add('ambience-'+state.ambience);
  scene.style.setProperty('--zoom',1);$('#styleName').textContent=theme.name;$('#sceneRoomName').textContent=(state.roomName||'MY DREAM ROOM').toUpperCase();
  $('#roomNameInput').value=state.roomName;$('#intensity').value=state.intensity;$('#intensityLabel').textContent=state.intensity+'%';
@@ -45,7 +48,8 @@ $$('[data-object]').forEach(b=>b.addEventListener('click',()=>addObject(b.datase
 $$('[data-theme]').forEach(b=>b.addEventListener('click',()=>{state.theme=b.dataset.theme;state.color=themes[state.theme].color;apply();persist()}));
 $$('[data-game]').forEach(b=>b.addEventListener('click',()=>{setGame(b.dataset.game);persist();notify('Écran changé : '+games[state.game].title)}));
 $$('[data-color]').forEach(b=>b.addEventListener('click',()=>{state.color=b.dataset.color;apply();persist()}));
-$$('[data-finish]').forEach(b=>b.addEventListener('click',()=>{state.finish=b.dataset.finish;apply();persist();notify('Décor du sol modifié : '+b.textContent.trim())}));
+$('[data-finish]').forEach(b=>b.addEventListener('click',()=>{state.finish=b.dataset.finish;apply();persist();notify('Sol modifié : '+b.textContent.trim())}));
+$('[data-room-scene]').forEach(b=>b.addEventListener('click',()=>{state.roomScene=b.dataset.roomScene;apply();persist();notify('Décor changé : '+b.textContent.trim())}));
 $$('[data-panel]').forEach(b=>b.addEventListener('click',()=>{$$('[data-panel]').forEach(x=>x.classList.toggle('active',x===b));$$('.panel-content').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel))}));
 $$('[data-ambience]').forEach(b=>b.addEventListener('click',()=>{state.ambience=b.dataset.ambience;apply();persist()}));
 $('#saveBtn').addEventListener('click',saveRoom);$('#resetBtn').addEventListener('click',resetRoom);
