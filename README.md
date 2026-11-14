@@ -16,7 +16,7 @@ Gaming Room Studio is a browser-based room-customization concept. It combines an
 | Interface | Semantic HTML5 |
 | Visual system | Responsive CSS, glassmorphism, layered scene composition |
 | Interactions | Vanilla JavaScript and DOM events |
-| Customization | Themes, accent colors, lighting, room finishes and draggable object markers |
+| Customization | Themes, accent colors, lighting, room environments, floor finishes and draggable object markers |
 | Persistence | Browser `localStorage` |
 | Saved designs | Multiple locally stored room configurations |
 | Export | PNG preview with JSON fallback |
@@ -28,7 +28,8 @@ Gaming Room Studio is a browser-based room-customization concept. It combines an
 - Responsive three-column workspace with a dark translucent control panel
 - Six visual themes and a configurable accent palette
 - Lighting toggle, LED intensity and ambient modes
-- Add, drag and remove room-object markers in the scene
+- Switch between three room environments (gaming studio, cozy bedroom and neon battlestation)
+- Add, drag and remove visual room objects, including furniture, gaming gear and decor
 - Rename the room and choose a floor finish
 - Save, restore and delete multiple room configurations
 - Export the room preview as PNG, with a JSON configuration fallback
