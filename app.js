@@ -61,5 +61,19 @@ let zoom=1;function setZoom(v){zoom=Math.max(.85,Math.min(1.25,v));image.style.t
 $('#exportBtn').addEventListener('click',async()=>{try{if(typeof html2canvas!=='function')throw new Error('Export library unavailable');const canvas=await html2canvas(scene,{useCORS:true,allowTaint:false,backgroundColor:'#211827',scale:2});const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='my-gaming-room.png';a.click();notify('Image de ta chambre exportée')}catch{const blob=new Blob([JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='gaming-room-design.json';a.click();URL.revokeObjectURL(url);notify('Export image indisponible : configuration JSON téléchargée')}});
 $('#settingsBtn').addEventListener('click',()=>{document.querySelector('[data-panel="ambience"]').click();$('#ambience').scrollIntoView({behavior:'smooth',block:'nearest'})});
 $('[data-category]').forEach(b=>b.addEventListener('click',()=>{$('[data-category]').forEach(x=>x.classList.toggle('active',x===b));const cat=b.dataset.category;$('[data-object]').forEach(card=>{const key=card.dataset.object;const category=(objects[key]?.[1]||'').toLowerCase();const visible=cat==='all'||(cat==='furniture'&&['chair','desk'].includes(key))||(cat==='gaming'&&category==='setup')||(cat==='lighting'&&category==='éclairage')||(cat==='decor'&&['décor','textile'].includes(category))||(cat==='plants'&&key==='plant')||(cat==='walls'&&key==='rug');card.hidden=!visible});$('#cataloguePanel').scrollIntoView({behavior:'smooth',block:'nearest'});notify('Catalogue : '+b.textContent.trim())}));
+document.addEventListener('click',event=>{
+ const button=event.target.closest('[data-category]');
+ if(!button)return;
+ event.preventDefault();event.stopImmediatePropagation();
+ $('[data-category]').forEach(item=>item.classList.toggle('active',item===button));
+ const category=button.dataset.category;
+ $('[data-object]').forEach(card=>{
+  const key=card.dataset.object,group=(objects[key]?.[1]||'').toLowerCase();
+  const visible=category==='all'||(category==='furniture'&&['chair','desk','shelf'].includes(key))||(category==='gaming'&&group==='setup')||(category==='lighting'&&group==='éclairage')||(category==='decor'&&['décor','textile'].includes(group))||(category==='plants'&&key==='plant')||(category==='walls'&&key==='rug');
+  card.hidden=!visible;
+ });
+ $('#cataloguePanel').scrollIntoView({behavior:'smooth',block:'nearest'});
+ notify('Catalogue : '+button.textContent.trim());
+},true);
 try{const saved=JSON.parse(localStorage.getItem('gamingRoomStudio'));if(saved)state={...defaults,...saved,objects:Array.isArray(saved.objects)?saved.objects.slice(0,20):[]};const collection=JSON.parse(localStorage.getItem('gamingRoomSaved'));if(Array.isArray(collection))savedRooms=collection.slice(0,12)}catch{state={...defaults,objects:[]};savedRooms=[]}
 apply();setView('studio');
