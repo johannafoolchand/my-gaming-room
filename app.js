@@ -2,7 +2,7 @@ const scene=document.getElementById('scene');
 const decorLayer=document.getElementById('decorLayer');
 const toast=document.getElementById('toast');
 const themes={bubblegum:['#f7c4dd','#efadd0','#dca0bf','#c77fa8','#ff7bc8'],lavender:['#d6c8ed','#bba8df','#c6b6dd','#a18bc6','#c5a2ff'],cherry:['#f7c0c7','#ed9eaa','#e4a2ad','#c77b8d','#ff879f'],aqua:['#c4e5e8','#9ed5da','#a8d5df','#7eb5c5','#79dce1']};
-const defaults={theme:'bubblegum',floor:'wood',lights:true,roomName:'My room',console:'PlayStation 5',led:'#ff7bc8',decor:[]};
+const defaults={theme:'bubblegum',floor:'wood',lights:true,roomName:'My room',console:'PlayStation 5',led:'#d88fbd',decor:[]};
 let state={...defaults};
 function notify(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(notify.timer);notify.timer=setTimeout(()=>toast.classList.remove('show'),2200)}
 function apply(){
@@ -21,7 +21,7 @@ function renderDecor(){
  state.decor.forEach((item,index)=>{const el=document.createElement('button');el.type='button';el.className='extra-decor';el.textContent=item.emoji;el.setAttribute('aria-label','Move or remove decoration');el.style.left=item.x+'%';el.style.top=item.y+'%';el.style.background='transparent';el.style.border='0';el.addEventListener('pointerdown',startDrag);el.addEventListener('dblclick',()=>{state.decor.splice(index,1);renderDecor();notify('Decoration removed ♡');});decorLayer.appendChild(el);});
  document.getElementById('itemCount').textContent=8+state.decor.length;
 }
-const icons={heart:'💗',star:'⭐',bow:'🎀',flower:'🌸',disc:'💿',bear:'🧸',lamp:'🪩',candy:'🍬'};
+const icons={heart:'♡',star:'✦',bow:'🎀',flower:'✿',disc:'◉',bear:'🧸',lamp:'✧',candy:'♡'};
 let activeDrag=null;
 function startDrag(e){e.preventDefault();const el=e.currentTarget;activeDrag={el,id:[...decorLayer.children].indexOf(el)};el.setPointerCapture(e.pointerId);el.addEventListener('pointermove',moveDrag);el.addEventListener('pointerup',endDrag,{once:true});}
 function moveDrag(e){if(!activeDrag)return;const rect=scene.getBoundingClientRect();const item=state.decor[activeDrag.id];item.x=Math.max(0,Math.min(95,(e.clientX-rect.left)/rect.width*100));item.y=Math.max(0,Math.min(90,(e.clientY-rect.top)/rect.height*100));activeDrag.el.style.left=item.x+'%';activeDrag.el.style.top=item.y+'%';}
