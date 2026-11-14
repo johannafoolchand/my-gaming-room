@@ -243,3 +243,64 @@ body{background:#faf7fb;background-image:radial-gradient(#d9c9dc 0.55px,transpar
 @media(max-width:1000px){.scene{height:420px}}
 @media(max-width:760px){.scene{height:390px}}
 @media(max-width:540px){.scene{height:300px}}
+
+
+/* Interactive Gaming Room Studio — new interface */
+:root{--ink:#34283b;--paper:#f8f3f8;--accent:#ec82d1}
+body{background:#f8f3f8;background-image:radial-gradient(#d6bfd7 .6px,transparent .6px);background-size:19px 19px}
+.site-shell{max-width:1600px;padding:0 3.2%}
+.topbar{height:72px;position:sticky;top:0;z-index:50;background:#fff9f4eF;backdrop-filter:blur(18px);padding:0 12px}
+.brand-mark{background:linear-gradient(145deg,#f28dce,#a98ae0);font-family:"DM Sans";font-size:24px}
+.brand-copy{font-size:14px;letter-spacing:-.02em;text-transform:none}
+.brand-copy small{display:none}
+.top-nav{gap:10px;margin-left:0}
+.top-nav a{padding:12px 16px;border:0;border-radius:24px;font-size:12px;color:#78687f}
+.top-nav a.active,.top-nav a:hover{background:linear-gradient(110deg,#e9a1d4,#a68cce);color:white}
+.top-actions{gap:12px}
+.saved-status{display:none}
+.save-button{background:linear-gradient(110deg,#dc85c8,#9b83c5);color:white;border:0;border-radius:24px;padding:11px 19px}
+.hero{min-height:190px;padding:25px 3% 20px}
+.hero h1{font-size:clamp(40px,4.3vw,58px)}
+.hero-sub{max-width:500px;font-size:13px}
+.hero-art{width:250px;height:170px;transform:scale(.78);transform-origin:right center}
+.studio-layout{grid-template-columns:minmax(0,1fr) 330px;gap:18px;padding-top:0}
+.section-heading{margin-bottom:10px}
+.section-heading h2{font-size:21px}
+.room-card,.customizer{border-radius:20px;border:1px solid #eaddeb;box-shadow:0 12px 34px #5d416d14}
+.room-toolbar{height:62px;padding:0 17px;background:#fff}
+.room-icon{background:#f6e6f5;color:#b56bb1}
+.room-title strong{font-size:13px}
+.room-controls button{border-radius:20px;padding:8px 13px;background:#fff}
+.scene-wrap{padding:12px;background:linear-gradient(145deg,#f5e8f3,#e8d8ee)}
+.scene{height:520px;max-width:none;border-radius:14px;box-shadow:0 12px 26px #62466c25;touch-action:pan-y}
+.room-art{filter:saturate(1.12) contrast(1.02)}
+.room-footer{padding:10px 16px;background:#fff;font-size:9px}
+.furniture-dock{padding:14px 16px 16px;background:linear-gradient(140deg,#fff,#fbf4fb);border-top:1px solid #f0e3f1}
+.dock-heading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px;font:700 9px "DM Mono";letter-spacing:.12em;color:#967c9a}
+.dock-heading small{font:10px "DM Sans";letter-spacing:0;color:#aa9bab}
+.furniture-list{display:flex;gap:9px;overflow-x:auto;padding:2px 1px 8px;scrollbar-width:thin;scrollbar-color:#d8b6d7 transparent}
+.furniture-choice{flex:0 0 82px;min-height:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border:1px solid #eee1ef;border-radius:13px;background:#fff;box-shadow:0 4px 10px #6c4c7010;color:#76667b;transition:.18s}
+.furniture-choice span{width:42px;height:39px;display:grid;place-items:center;border-radius:10px;background:linear-gradient(145deg,#f8e6f3,#e5d9f2);font-size:25px}
+.furniture-choice b{font-size:9px;font-weight:600;white-space:nowrap}
+.furniture-choice:hover{transform:translateY(-3px);border-color:#cb8ac5;box-shadow:0 8px 18px #aa77ad26}
+.room-object{position:absolute;z-index:22;min-width:42px;min-height:42px;padding:3px 5px;border:1px solid #ffffffbd;border-radius:13px;background:linear-gradient(145deg,#fff9,#ead3f2d9);box-shadow:0 7px 15px #4c315b3a,inset 0 1px #fff;color:#4b3652;font-size:30px;line-height:1;display:grid;place-items:center;cursor:grab;touch-action:none;user-select:none;backdrop-filter:blur(5px);transition:box-shadow .15s,transform .15s}
+.room-object:hover{transform:scale(1.08);box-shadow:0 9px 20px #4c315b50}
+.room-object:active{cursor:grabbing;transform:scale(1.12)}
+.room-object.detail{min-width:34px;min-height:34px;font-size:25px;background:#ffffffa8}
+.customizer{padding:20px 18px;min-height:620px;background:linear-gradient(155deg,#fff,#fcf7fd)}
+.customizer-heading h2{font-size:22px}
+.tab-row{background:#f2eaf4;border-radius:12px;padding:4px}
+.tab{font-size:10px;border-radius:9px}
+.tab.active{background:#fff;box-shadow:0 3px 9px #64466a17;color:#895b91}
+.swatch{border-radius:12px;padding:7px}
+.swatch i{height:48px;border-radius:8px}
+.floor-choice{border-radius:10px;padding:12px}
+.decor-item{border-radius:11px}
+.export-button{background:linear-gradient(110deg,#d987c5,#987fbe);border-radius:12px;padding:14px}
+.custom-bottom p{font-size:7px}
+.preview-caption{font-size:12px}
+.site-footer{margin-top:20px}
+#toast{background:#49334f;border:1px solid #ffffff30}
+@media(max-width:1100px){.studio-layout{grid-template-columns:minmax(0,1fr) 300px;gap:13px}.scene{height:440px}.site-shell{padding:0 2%}}
+@media(max-width:780px){.topbar{height:auto;min-height:66px;flex-wrap:wrap;gap:8px;padding:10px}.top-nav{order:3;width:100%;justify-content:center}.top-nav a{padding:9px 12px}.studio-layout{grid-template-columns:1fr}.scene{height:440px}.customizer{min-height:unset}.hero{min-height:170px}.hero-art{opacity:.45}}
+@media(max-width:520px){.site-shell{padding:0 10px}.brand-copy{font-size:12px}.save-button{padding:9px 12px;font-size:10px}.hero{padding:22px 3%;min-height:160px}.hero h1{font-size:39px}.hero-sub{font-size:11px;max-width:270px}.hero-art{right:-35px;transform:scale(.55);opacity:.28}.scene{height:320px}.scene-wrap{padding:7px}.room-toolbar{padding:0 10px}.room-controls button{padding:7px 9px}.dock-heading{display:block}.dock-heading small{display:block;margin-top:5px}.furniture-choice{flex-basis:72px;min-height:72px}.customizer{padding:17px 14px}.room-footer{font-size:7px}.drag-hint{font-size:6px}}
