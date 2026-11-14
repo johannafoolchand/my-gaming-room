@@ -36,16 +36,76 @@
         <div class="room-card">
           <div class="room-toolbar"><div class="room-title"><span class="room-icon">✳</span><div><small>NOW DESIGNING</small><strong id="roomName">My room</strong></div></div><div class="room-controls"><button id="lightsBtn" title="Toggle lights">☼ <span>Lights on</span></button><button id="resetBtn" title="Reset room">↺ <span>Reset</span></button></div></div>
           <div class="scene-wrap"><div class="scene" id="scene" aria-label="Your customisable gaming room">
-            <div class="wall wall-back"></div><div class="wall wall-left"></div><div class="floor"></div>
-            <div class="window"><div class="window-sky"></div><div class="window-cross"></div><span>✦ &nbsp; ✧ &nbsp; ✦</span></div>
-            <div class="poster poster-one"><small>GOOD VIBES</small><b>ONLY</b><span>♡</span></div><div class="poster poster-two"><span>★</span><b>GAME<br>GIRL</b></div>
-            <div class="shelf"><i>▰</i><i>▰</i><i>▰</i></div>
-            <div class="desk"><div class="desk-top"></div><div class="desk-leg left"></div><div class="desk-leg right"></div></div>
-            <div class="monitor"><div class="monitor-screen"><span>♡</span><b>PRESS<br>START</b><small>PLAYER 1 READY</small></div><div class="monitor-neck"></div><div class="monitor-foot"></div></div>
-            <div class="keyboard">▰ ▰ ▰ ▰ ▰ ▰ ▰</div><div class="mouse">◉</div>
-            <div class="pc-tower"><div class="pc-glass"><i></i><i></i><i></i></div><span>✧</span></div>
-            <div class="chair"><div class="chair-back"></div><div class="chair-seat"></div><div class="chair-post"></div><div class="chair-base"></div></div>
-            <div class="plant">🌿</div><div class="plush">🐱</div><div class="console">▰<small>♡</small></div>
+            <svg class="room-art" viewBox="0 0 820 470" role="img" aria-label="A detailed pastel gaming bedroom with a desk, gaming PC, neon lighting and cosy decor">
+              <defs>
+                <linearGradient id="backWall" x2="0" y2="1"><stop stop-color="#fff9fd"/><stop offset="1" stop-color="var(--wall1)"/></linearGradient>
+                <linearGradient id="sideWall" x2="1" y2="1"><stop stop-color="#f7e9f4"/><stop offset="1" stop-color="var(--wall2)"/></linearGradient>
+                <linearGradient id="floorWood" x2="0" y2="1"><stop stop-color="var(--floor1)"/><stop offset="1" stop-color="var(--floor2)"/></linearGradient>
+                <linearGradient id="deskTop" x2="0" y2="1"><stop stop-color="#fff5fb"/><stop offset="1" stop-color="#c99abf"/></linearGradient>
+                <linearGradient id="glass" x2="1" y2="1"><stop stop-color="#f5dff1"/><stop offset=".5" stop-color="#a99acb"/><stop offset="1" stop-color="#f7c8e5"/></linearGradient>
+                <linearGradient id="screen" x2="0" y2="1"><stop stop-color="#3c3154"/><stop offset="1" stop-color="#171a31"/></linearGradient>
+                <linearGradient id="chair" x2="1"><stop stop-color="#a978a8"/><stop offset=".5" stop-color="#f0cce4"/><stop offset="1" stop-color="#a77da9"/></linearGradient>
+                <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%"><feGaussianBlur stdDeviation="7"/></filter>
+                <filter id="neon" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+              <rect width="820" height="470" fill="url(#backWall)"/>
+              <path d="M0 0H820V320L410 370 0 320Z" fill="url(#backWall)"/>
+              <path d="M0 0L155 48V338L0 320Z" fill="url(#sideWall)" opacity=".9"/>
+              <path d="M0 320L410 370 820 320V470H0Z" fill="url(#floorWood)"/>
+              <g opacity=".18" stroke="#805d84" stroke-width="2"><path d="M80 333L80 470M190 346L190 470M300 360L300 470M520 360L520 470M640 345L640 470M750 330L750 470"/><path d="M0 390L820 390M0 438L820 438"/></g>
+              <ellipse cx="420" cy="410" rx="300" ry="28" fill="#674b72" opacity=".2" filter="url(#shadow)"/>
+              <!-- large window and dreamy night view -->
+              <rect x="55" y="55" width="190" height="190" rx="8" fill="#fff" stroke="#c9a7c8" stroke-width="7"/>
+              <rect x="65" y="65" width="170" height="170" rx="3" fill="#b9c8df"/>
+              <path d="M65 190Q110 140 145 180T235 150V235H65Z" fill="#e9c5e0"/>
+              <circle cx="193" cy="100" r="17" fill="#fff1d7"/><path d="M65 155Q120 100 235 145V65H65Z" fill="#b5bad8" opacity=".55"/>
+              <path d="M150 65V235M65 150H235" stroke="#fff" stroke-width="7"/>
+              <g fill="#fff" opacity=".9"><path d="M95 92l4 10 10 4-10 4-4 10-4-10-10-4 10-4Z"/><path d="M118 115l3 7 7 3-7 3-3 7-3-7-7-3 7-3Z"/></g>
+              <!-- wall art, floating shelf and collectibles -->
+              <g transform="rotate(-5 360 120)"><rect x="290" y="50" width="125" height="145" rx="3" fill="#fff" opacity=".95"/><rect x="298" y="58" width="109" height="129" fill="#c79ac4"/><text x="352" y="88" text-anchor="middle" font-size="10" fill="#fff" letter-spacing="3">GOOD DAYS</text><text x="352" y="128" text-anchor="middle" font-family="Georgia" font-size="27" font-weight="bold" fill="#fff">PLAY</text><text x="352" y="151" text-anchor="middle" font-size="17" fill="#fff">♡</text></g>
+              <g transform="rotate(5 655 145)"><rect x="595" y="75" width="105" height="135" rx="3" fill="#fff"/><rect x="602" y="82" width="91" height="121" fill="#9f91bd"/><text x="647" y="118" text-anchor="middle" font-size="20" fill="#fff">✦</text><text x="647" y="150" text-anchor="middle" font-family="Georgia" font-size="18" fill="#fff">GIRL</text><text x="647" y="174" text-anchor="middle" font-size="11" fill="#fff" letter-spacing="2">GAMER</text></g>
+              <path d="M270 250H710" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity=".8"/>
+              <path d="M270 255H710" stroke="#b18bad" stroke-width="5" stroke-linecap="round"/>
+              <g><rect x="300" y="215" width="45" height="33" rx="5" fill="#e8c5dd" stroke="#fff" stroke-width="4"/><path d="M311 238l8-15 8 15Z" fill="#fff"/><rect x="365" y="203" width="30" height="45" rx="4" fill="#b4a0c7"/><circle cx="380" cy="215" r="7" fill="#f9d8e9"/></g>
+              <!-- trailing vines and LED strip -->
+              <path d="M34 285Q80 270 95 300T150 292" fill="none" stroke="#789879" stroke-width="3"/>
+              <g fill="#8cae8c"><ellipse cx="56" cy="277" rx="8" ry="15" transform="rotate(-45 56 277)"/><ellipse cx="77" cy="290" rx="8" ry="15" transform="rotate(45 77 290)"/><ellipse cx="105" cy="284" rx="8" ry="15" transform="rotate(-40 105 284)"/></g>
+              <path d="M20 315H790" stroke="var(--accent)" stroke-width="4" opacity=".7" filter="url(#neon)"/>
+              <!-- desk body -->
+              <path d="M180 285L690 285 735 315 225 315Z" fill="url(#deskTop)" stroke="#fff" stroke-width="5"/>
+              <path d="M225 315H735V365H225Z" fill="#c99fbd"/>
+              <path d="M235 322H725V359H235Z" fill="#d9b5ce"/>
+              <path d="M260 365V425M700 365V425" stroke="#f6e7f2" stroke-width="17" stroke-linecap="round"/>
+              <path d="M252 425H278M690 425H716" stroke="#a47c9f" stroke-width="10" stroke-linecap="round"/>
+              <!-- gaming monitor with neon screen -->
+              <ellipse cx="460" cy="293" rx="115" ry="12" fill="#7e5d85" opacity=".22" filter="url(#shadow)"/>
+              <rect x="345" y="150" width="225" height="145" rx="13" fill="#fff" stroke="#b89ab9" stroke-width="6"/>
+              <rect x="354" y="159" width="207" height="127" rx="7" fill="url(#screen)"/>
+              <circle cx="457" cy="212" r="43" fill="none" stroke="var(--accent)" stroke-width="3" opacity=".8" filter="url(#neon)"/>
+              <path d="M425 220Q457 174 489 220Q457 260 425 220Z" fill="none" stroke="#f5d6ec" stroke-width="2"/>
+              <text x="457" y="250" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="#fff" letter-spacing="3">PRESS START</text>
+              <path d="M447 296V316M467 296V316" stroke="#f8eff8" stroke-width="9"/>
+              <rect x="415" y="315" width="85" height="8" rx="4" fill="#fff"/>
+              <!-- keyboard, mouse and headset -->
+              <g transform="translate(345 329) skewX(-12)"><rect width="130" height="17" rx="5" fill="#8d78a9" stroke="#fff" stroke-width="2"/><path d="M12 5H118M12 11H118" stroke="#f6d7ed" stroke-width="2" stroke-dasharray="5 4"/></g>
+              <path d="M515 333Q515 309 536 309Q557 309 557 333" fill="none" stroke="#f4d5e9" stroke-width="8"/><rect x="510" y="328" width="9" height="22" rx="4" fill="#b18ab4"/><rect x="552" y="328" width="9" height="22" rx="4" fill="#b18ab4"/>
+              <!-- PC tower, tempered glass and RGB fans -->
+              <rect x="620" y="270" width="90" height="155" rx="12" fill="#f9edf6" stroke="#fff" stroke-width="6"/>
+              <rect x="630" y="281" width="70" height="132" rx="7" fill="url(#glass)" stroke="#b69ab9" stroke-width="2"/>
+              <g fill="none" stroke="#f8d7ef" stroke-width="5" filter="url(#neon)"><circle cx="665" cy="310" r="15"/><circle cx="665" cy="350" r="15"/><circle cx="665" cy="390" r="15"/></g>
+              <g fill="#fff" opacity=".8"><circle cx="665" cy="310" r="4"/><circle cx="665" cy="350" r="4"/><circle cx="665" cy="390" r="4"/></g>
+              <!-- plush gaming chair in foreground -->
+              <path d="M110 320Q110 285 145 280L205 280Q240 285 240 320V385Q240 405 220 405H130Q110 405 110 385Z" fill="url(#chair)" stroke="#fff" stroke-width="7"/>
+              <path d="M125 330Q175 347 225 330" fill="none" stroke="#f8e4f2" stroke-width="5"/>
+              <path d="M130 398L115 430M220 398L235 430" stroke="#f7e7f4" stroke-width="12" stroke-linecap="round"/>
+              <path d="M175 405V440M135 440H215" stroke="#927b9c" stroke-width="9" stroke-linecap="round"/>
+              <circle cx="175" cy="438" r="8" fill="#f4e6f2"/>
+              <!-- small accessories -->
+              <g transform="translate(55 300)"><path d="M0 25Q-5 0 18 0Q42 0 37 25Z" fill="#d9bdd7" stroke="#fff" stroke-width="3"/><circle cx="18" cy="14" r="8" fill="#f8e5f1"/><path d="M18 22V38" stroke="#b08ba9" stroke-width="4"/></g>
+              <g transform="translate(755 265)"><path d="M0 38Q-8 10 10 5Q28 10 20 38Z" fill="#e9c5dd"/><circle cx="10" cy="17" r="6" fill="#fff"/></g>
+              <g fill="#fff" opacity=".95"><path d="M270 280l5 12 12 5-12 5-5 12-5-12-12-5 12-5Z"/><path d="M580 255l4 9 9 4-9 4-4 9-4-9-9-4 9-4Z"/></g>
+              <rect x="0" y="0" width="820" height="470" fill="none" stroke="#fff" stroke-width="8" opacity=".7"/>
+            </svg>
             <div id="decorLayer"></div><div class="ambient-glow"></div>
           </div></div>
           <div class="room-footer"><span><b id="itemCount">8</b> pieces in your space</span><span class="drag-hint">Drag to move · Double-click to remove</span></div>
