@@ -46,6 +46,10 @@
         <div class="scene-topline"><span><i class="pulse-dot"></i> APERÇU EN DIRECT</span><div class="scene-tools"><button id="toggleLights" aria-pressed="true">☼ Lumières ON</button><button id="fullscreenBtn" aria-label="Plein écran">⛶</button></div></div>
         <div class="room-scene" id="roomScene" role="img" aria-label="Chambre gaming immersive avec lit, bureau, écrans et éclairage RGB">
           <div class="scene-image" id="sceneImage"></div>
+          <div class="game-screen game-spiderman" id="gameScreen" aria-label="Aperçu du jeu affiché sur l'écran">
+            <div class="game-screen-art"></div>
+            <div class="game-screen-copy"><span class="game-screen-kicker">PLAYSTATION 5 · NOW PLAYING</span><strong id="gameScreenTitle">MARVEL’S SPIDER-MAN 2</strong><small id="gameScreenSubtitle">NEW YORK · TWO SPIDERS. ONE CITY.</small></div>
+          </div>
           <div class="scene-vignette"></div>
           <div class="scene-label"><span class="scene-label-dot"></span><span id="sceneRoomName">MY DREAM ROOM</span><small>PERSONAL SPACE / 001</small></div>
           <div class="scene-object-layer" id="objectLayer" aria-label="Objets ajoutés à la chambre"></div>
@@ -84,6 +88,16 @@
           <button class="theme-choice" data-theme="minimal"><span class="theme-preview preview-minimal"></span><b>Minimal</b></button>
           <button class="theme-choice" data-theme="nature"><span class="theme-preview preview-nature"></span><b>Nature</b></button>
           <button class="theme-choice" data-theme="galaxy"><span class="theme-preview preview-galaxy"></span><b>Galaxy</b></button>
+        </div>
+        <div class="panel-divider"></div>
+        <div class="control-label">SUR TON ÉCRAN <span>PLAYSTATION 5</span></div>
+        <div class="game-choice-grid">
+          <button class="game-choice selected" data-game="spiderman"><span class="game-thumb game-thumb-spiderman"></span><b>Spider-Man 2</b></button>
+          <button class="game-choice" data-game="godofwar"><span class="game-thumb game-thumb-godofwar"></span><b>God of War</b></button>
+          <button class="game-choice" data-game="horizon"><span class="game-thumb game-thumb-horizon"></span><b>Horizon</b></button>
+          <button class="game-choice" data-game="gt7"><span class="game-thumb game-thumb-gt7"></span><b>Gran Turismo 7</b></button>
+          <button class="game-choice" data-game="astrobot"><span class="game-thumb game-thumb-astrobot"></span><b>Astro Bot</b></button>
+          <button class="game-choice" data-game="tlou"><span class="game-thumb game-thumb-tlou"></span><b>The Last of Us</b></button>
         </div>
         <div class="panel-divider"></div>
         <div class="control-label">SOUS TES PIEDS</div>
