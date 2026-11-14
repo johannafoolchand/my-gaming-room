@@ -1,35 +1,41 @@
-(() => {
-"use strict";
-const KEY="my-gaming-room.design.v1";
-const $=s=>document.querySelector(s);
-const defaults={name:"Pixel Paradise",wall:"pink",floor:"wood",glow:65,lights:true,platform:"PlayStation 5",decorations:[]};
-let state=load();
-let drag=null;
-function load(){try{const v=JSON.parse(localStorage.getItem(KEY));return v&&typeof v==="object"?{...defaults,...v,decorations:Array.isArray(v.decorations)?v.decorations:[]}:structuredClone(defaults)}catch{return structuredClone(defaults)}}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(state));$("#save-state").textContent="● Saved on this device";}catch{$("#save-state").textContent="! Save unavailable";}}
-function toast(s){const t=$("#toast");t.textContent=s;t.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),2200)}
+const scene=document.getElementById('scene');
+const decorLayer=document.getElementById('decorLayer');
+const toast=document.getElementById('toast');
+const themes={bubblegum:['#f7c4dd','#efadd0','#dca0bf','#c77fa8','#ff7bc8'],lavender:['#d6c8ed','#bba8df','#c6b6dd','#a18bc6','#c5a2ff'],cherry:['#f7c0c7','#ed9eaa','#e4a2ad','#c77b8d','#ff879f'],aqua:['#c4e5e8','#9ed5da','#a8d5df','#7eb5c5','#79dce1']};
+const defaults={theme:'bubblegum',floor:'wood',lights:true,roomName:'My room',console:'PlayStation 5',led:'#ff7bc8',decor:[]};
+let state={...defaults};
+function notify(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(notify.timer);notify.timer=setTimeout(()=>toast.classList.remove('show'),2200)}
 function apply(){
-$("#room-name").value=state.name;$("#room-title").textContent="/ "+state.name;$("#back-wall").style.setProperty("--wall",({pink:"#e8b9db",lilac:"#c7b7ed",blue:"#a9cce8",dark:"#66617e"})[state.wall]||"#e8b9db");
-$("#floor").className="floor"+(state.floor==="wood"?"": " "+state.floor);$("#glow-range").value=state.glow;$("#glow-value").value=state.glow+"%";$("#room-stage").style.setProperty("--glow",state.lights?state.glow/100:0);$("#light-toggle").textContent=state.lights?"☼ Lights on":"☾ Lights off";$("#light-toggle").setAttribute("aria-pressed",String(state.lights));$("#platform").value=state.platform;
-document.querySelectorAll(".swatch").forEach(b=>b.classList.toggle("selected",b.dataset.color===state.wall));document.querySelectorAll(".choice").forEach(b=>b.classList.toggle("selected",b.dataset.floor===state.floor));renderDecor();
+ const t=themes[state.theme]||themes.bubblegum;
+ ['--wall1','--wall2','--floor1','--floor2','--accent'].forEach((k,i)=>scene.style.setProperty(k,t[i]));
+ scene.style.setProperty('--accent',state.led||t[4]);scene.classList.toggle('lights-off',!state.lights);
+ document.getElementById('roomName').textContent=state.roomName;
+ document.getElementById('setupName').value=state.roomName;document.getElementById('consoleSelect').value=state.console;document.getElementById('ledColor').value=state.led;
+ document.querySelectorAll('[data-theme]').forEach(b=>b.classList.toggle('selected',b.dataset.theme===state.theme));
+ document.querySelectorAll('[data-floor]').forEach(b=>b.classList.toggle('selected',b.dataset.floor===state.floor));
+ document.getElementById('lightsBtn').textContent=state.lights?'☼ Lights on':'☾ Lights off';
+ scene.dataset.floor=state.floor;renderDecor();
 }
-function renderDecor(){const layer=$("#decor-layer");layer.innerHTML="";state.decorations.forEach(d=>{const el=document.createElement("button");el.type="button";el.className="decoration";el.textContent=d.emoji;el.style.left=d.x+"%";el.style.top=d.y+"%";el.setAttribute("aria-label",d.name+" decoration; select and press Delete to remove");el.title=d.name+" — drag to move, Delete to remove";el.addEventListener("pointerdown",startDrag);el.addEventListener("click",()=>{document.querySelectorAll(".decoration").forEach(x=>x.classList.remove("selected"));el.classList.add("selected")});layer.append(el)})}
-const decorMap={plant:["🪴","Plant"],star:["⭐","Star"],console:["🎮","Console"],lamp:["💡","Lamp"],cat:["🐈","Cat"],heart:["💗","Heart"]};
-$("#wall-swatches").addEventListener("click",e=>{const b=e.target.closest("[data-color]");if(!b)return;state.wall=b.dataset.color;apply();persist()});
-$("#floor-choices").addEventListener("click",e=>{const b=e.target.closest("[data-floor]");if(!b)return;state.floor=b.dataset.floor;apply();persist()});
-$("#glow-range").addEventListener("input",e=>{state.glow=Number(e.target.value);apply();persist()});
-$("#light-toggle").addEventListener("click",()=>{state.lights=!state.lights;apply();persist()});
-$("#room-name").addEventListener("input",e=>{state.name=e.target.value.slice(0,28)||"My gaming room";$("#room-title").textContent="/ "+state.name;persist()});
-$("#platform").addEventListener("change",e=>{state.platform=e.target.value;persist();toast("Platform updated")});
-$("#decor-options").addEventListener("click",e=>{const b=e.target.closest("[data-decor]");if(!b)return;const [emoji,name]=decorMap[b.dataset.decor];state.decorations.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),emoji,name,x:35+Math.random()*30,y:35+Math.random()*25});renderDecor();persist();toast(name+" added — drag it into place")});
-function startDrag(e){e.preventDefault();const el=e.currentTarget;const d=state.decorations.find(x=>x.emoji===el.textContent&&Math.abs(x.x-parseFloat(el.style.left))<1&&Math.abs(x.y-parseFloat(el.style.top))<1);if(!d)return;drag={id:d.id};el.setPointerCapture(e.pointerId);el.addEventListener("pointermove",moveDrag);el.addEventListener("pointerup",endDrag,{once:true})}
-function moveDrag(e){if(!drag)return;const rect=$("#room").getBoundingClientRect();const d=state.decorations.find(x=>x.id===drag.id);if(!d)return;d.x=Math.max(0,Math.min(94,(e.clientX-rect.left)/rect.width*100));d.y=Math.max(0,Math.min(88,(e.clientY-rect.top)/rect.height*100));const el=e.currentTarget;el.style.left=d.x+"%";el.style.top=d.y+"%"}
-function endDrag(e){if(!drag)return;e.currentTarget.removeEventListener("pointermove",moveDrag);drag=null;persist()}
-$("#clear-decor").addEventListener("click",()=>{state.decorations=[];renderDecor();persist();toast("Decorations cleared")});
-document.addEventListener("keydown",e=>{if(e.key!=="Delete"&&e.key!=="Backspace")return;if(["INPUT","SELECT","TEXTAREA"].includes(document.activeElement.tagName))return;const selected=document.querySelector(".decoration.selected");if(!selected)return;const rect=selected.getBoundingClientRect(),room=$("#room").getBoundingClientRect();const d=state.decorations.find(x=>Math.abs(x.x-(rect.left-room.left)/room.width*100)<3&&Math.abs(x.y-(rect.top-room.top)/room.height*100)<3);if(d){state.decorations=state.decorations.filter(x=>x.id!==d.id);renderDecor();persist();}});
-$("#reset-room").addEventListener("click",()=>{if(!confirm("Reset your room to the original design?"))return;state=structuredClone(defaults);apply();persist();toast("Room reset")});
-$("#export-room").addEventListener("click",()=>{const wall=({pink:"#e8b9db",lilac:"#c7b7ed",blue:"#a9cce8",dark:"#66617e"})[state.wall];const floor=state.floor==="pink"?"#d78fbc":state.floor==="checker"?"#cbb9dc":"#c68f72";const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700"><rect width="100%" height="100%" fill="#f6f0fa"/><polygon points="170,80 830,80 830,430 170,490" fill="${wall}"/><polygon points="830,80 1000,140 1000,490 830,430" fill="#c99fc9"/><polygon points="170,490 830,430 1000,490 500,680" fill="${floor}"/><rect x="420" y="265" width="250" height="100" rx="8" fill="#f1d3e5" stroke="#9e6c9a" stroke-width="8"/><rect x="500" y="120" width="170" height="130" rx="8" fill="#51455f"/><rect x="510" y="130" width="150" height="110" rx="4" fill="#514080"/><text x="585" y="185" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#f9d5ed">GAME ON</text><text x="500" y="55" text-anchor="middle" font-family="sans-serif" font-size="28" font-weight="bold" fill="#554568">${escapeXml(state.name)}</text>${state.decorations.map(d=>`<text x="${d.x*10}" y="${d.y*7.1}" font-size="38">${d.emoji}</text>`).join("")}<text x="500" y="680" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#554568">${escapeXml(state.platform)}</text></svg>`;
-const blob=new Blob([svg],{type:"image/svg+xml"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="my-gaming-room.svg";a.click();URL.revokeObjectURL(url);toast("Room exported as SVG")});
-function escapeXml(s){return String(s).replace(/[<>&'"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;","'":"&apos;",'"':"&quot;"}[c]))}
+function renderDecor(){
+ decorLayer.innerHTML='';
+ state.decor.forEach((item,index)=>{const el=document.createElement('button');el.type='button';el.className='extra-decor';el.textContent=item.emoji;el.setAttribute('aria-label','Move or remove decoration');el.style.left=item.x+'%';el.style.top=item.y+'%';el.style.background='transparent';el.style.border='0';el.addEventListener('pointerdown',startDrag);el.addEventListener('dblclick',()=>{state.decor.splice(index,1);renderDecor();});decorLayer.appendChild(el);});
+ document.getElementById('itemCount').textContent=8+state.decor.length;
+}
+const icons={heart:'💗',star:'⭐',bow:'🎀',flower:'🌸',disc:'💿',bear:'🧸',lamp:'🪩',candy:'🍬'};
+let activeDrag=null;
+function startDrag(e){e.preventDefault();const el=e.currentTarget;activeDrag={el,id:[...decorLayer.children].indexOf(el)};el.setPointerCapture(e.pointerId);el.addEventListener('pointermove',moveDrag);el.addEventListener('pointerup',endDrag,{once:true});}
+function moveDrag(e){if(!activeDrag)return;const rect=scene.getBoundingClientRect();const item=state.decor[activeDrag.id];item.x=Math.max(0,Math.min(95,(e.clientX-rect.left)/rect.width*100));item.y=Math.max(0,Math.min(90,(e.clientY-rect.top)/rect.height*100));activeDrag.el.style.left=item.x+'%';activeDrag.el.style.top=item.y+'%';}
+function endDrag(e){if(activeDrag){activeDrag.el.removeEventListener('pointermove',moveDrag);activeDrag=null;}}
+document.querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab,.tab-content').forEach(el=>el.classList.remove('active'));btn.classList.add('active');document.getElementById(btn.dataset.tab).classList.add('active');}));
+document.querySelectorAll('[data-theme]').forEach(btn=>btn.addEventListener('click',()=>{state.theme=btn.dataset.theme;apply();}));
+document.querySelectorAll('[data-floor]').forEach(btn=>btn.addEventListener('click',()=>{state.floor=btn.dataset.floor;apply();}));
+document.querySelectorAll('[data-item]').forEach(btn=>btn.addEventListener('click',()=>{state.decor.push({emoji:icons[btn.dataset.item],x:42+Math.random()*18,y:28+Math.random()*25});renderDecor();}));
+document.getElementById('lightsBtn').addEventListener('click',()=>{state.lights=!state.lights;apply();});
+document.getElementById('setupName').addEventListener('input',e=>{state.roomName=e.target.value.slice(0,28);document.getElementById('roomName').textContent=state.roomName;});
+document.getElementById('consoleSelect').addEventListener('change',e=>state.console=e.target.value);
+document.getElementById('ledColor').addEventListener('input',e=>{state.led=e.target.value;apply();});
+document.getElementById('saveBtn').addEventListener('click',()=>{try{localStorage.setItem('myGamingRoom',JSON.stringify(state));notify('Your room is saved on this device ♡');}catch{notify('Saving is unavailable in this browser.');}});
+document.getElementById('resetBtn').addEventListener('click',()=>{state={...defaults,decor:[]};apply();notify('Room reset ✧');});
+document.getElementById('exportBtn').addEventListener('click',()=>{const markup=scene.outerHTML;const svg='<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml">'+markup+'</div></foreignObject></svg>';const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));const a=document.createElement('a');a.href=url;a.download='my-gaming-room.svg';a.click();URL.revokeObjectURL(url);notify('Room export started ✧');});
+try{const saved=localStorage.getItem('myGamingRoom');if(saved){const parsed=JSON.parse(saved);state={...defaults,...parsed,decor:Array.isArray(parsed.decor)?parsed.decor:[]};}}catch{state={...defaults};}
 apply();
-})();
