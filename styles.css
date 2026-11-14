@@ -67,3 +67,15 @@
 .placed-headset .placed-visual:before{left:9px;top:6px;width:20px;height:20px;border:4px solid #d9c5e5;border-bottom-color:transparent;border-radius:14px 14px 5px 5px}
 .placed-headset .placed-visual:after{left:7px;top:19px;width:5px;height:10px;border-radius:3px;background:#ed82cf;box-shadow:20px 0 #ed82cf}
 .placed-object:focus-visible{outline:2px solid white;outline-offset:3px}
+
+
+/* Room environment presets */
+.room-scene-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.room-scene-choice{min-width:0;padding:6px;border:1px solid #ffffff20;border-radius:10px;background:#ffffff08;color:#e9ddeb;text-align:left}
+.room-scene-choice.selected,.room-scene-choice:hover{border-color:var(--accent);box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 45%,transparent),0 0 18px color-mix(in srgb,var(--accent) 18%,transparent)}
+.room-scene-thumb{display:block;height:55px;border-radius:6px;margin-bottom:6px;background-size:cover;background-position:center}
+.room-thumb-gaming{background-image:url('https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=400&q=80')}
+.room-thumb-cozy{background-image:url('https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=400&q=80')}
+.room-thumb-neon{background-image:url('https://images.unsplash.com/photo-1593062096033-9a26b09da705?auto=format&fit=crop&w=400&q=80')}
+.room-scene-choice b{display:block;font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:700px){.room-scene-thumb{height:42px}.room-scene-choice b{font-size:7px}}
