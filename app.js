@@ -19,7 +19,7 @@ function apply(){
  setGame(state.game||'spiderman');
  updateSceneLighting();
  image.style.backgroundImage='url("'+(roomScenes[state.roomScene]||roomScenes.gaming)+'")';
- $('[data-room-scene]').forEach(b=>b.classList.toggle('selected',b.dataset.roomScene===(state.roomScene||'gaming')));
+ $$('[data-room-scene]').forEach(b=>b.classList.toggle('selected',b.dataset.roomScene===(state.roomScene||'gaming')));
  scene.classList.toggle('lights-off',!state.lights);scene.dataset.finish=state.finish;scene.style.setProperty('--led-opacity',state.intensity/100);scene.classList.remove('ambience-rainbow','ambience-pulse','ambience-breathe');if(state.ambience!=='static')scene.classList.add('ambience-'+state.ambience);
  scene.style.setProperty('--zoom',1);$('#styleName').textContent=theme.name;$('#sceneRoomName').textContent=(state.roomName||'MY DREAM ROOM').toUpperCase();
  $('#roomNameInput').value=state.roomName;$('#intensity').value=state.intensity;$('#intensityLabel').textContent=state.intensity+'%';
