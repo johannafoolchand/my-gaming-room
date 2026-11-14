@@ -6,9 +6,15 @@ const defaults={theme:'y2k',color:'#ed82cf',finish:'wood',lights:true,intensity:
 let state={...defaults,objects:[]},savedRooms=[];
 function notify(message){toast.textContent=message;toast.classList.add('show');clearTimeout(notify.timer);notify.timer=setTimeout(()=>toast.classList.remove('show'),2200)}
 function persist(){try{localStorage.setItem('gamingRoomStudio',JSON.stringify(state));localStorage.setItem('gamingRoomSaved',JSON.stringify(savedRooms))}catch{}}
+function updateSceneLighting(){
+ const theme=themes[state.theme]||themes.y2k;
+ const finishFilter=state.finish==='dark'?'brightness(.9) saturate(.9)':state.finish==='soft'?'brightness(1.12) saturate(.88)':'brightness(1.04) saturate(1.02)';
+ const lightLevel=state.lights?(1.02+Number(state.intensity||0)/500):.58;
+ image.style.filter=(theme.filter||'')+' '+finishFilter+' brightness('+lightLevel+')';
+}
 function apply(){
  const theme=themes[state.theme]||themes.y2k;document.documentElement.style.setProperty('--accent',state.color||theme.color);
- image.style.filter=(theme.filter||'')+' brightness('+(state.lights?(0.72+state.intensity/350):0.42)+')';
+ updateSceneLighting();
  scene.classList.toggle('lights-off',!state.lights);scene.dataset.finish=state.finish;scene.style.setProperty('--led-opacity',state.intensity/100);scene.classList.remove('ambience-rainbow','ambience-pulse','ambience-breathe');if(state.ambience!=='static')scene.classList.add('ambience-'+state.ambience);
  scene.style.setProperty('--zoom',1);$('#styleName').textContent=theme.name;$('#sceneRoomName').textContent=(state.roomName||'MY DREAM ROOM').toUpperCase();
  $('#roomNameInput').value=state.roomName;$('#intensity').value=state.intensity;$('#intensityLabel').textContent=state.intensity+'%';
@@ -17,7 +23,13 @@ function apply(){
  $('.toggle-switch').classList.toggle('on',state.lights);renderObjects();renderSaved();
 }
 function renderObjects(){objectLayer.innerHTML='';state.objects.forEach((item,index)=>{const el=document.createElement('button');el.className='placed-object';el.type='button';el.style.left=item.x+'%';el.style.top=item.y+'%';el.dataset.index=index;el.innerHTML='<span>'+item.label+'</span><small>'+item.category+'</small>';el.setAttribute('aria-label',item.label+', glisser pour déplacer, double-cliquer pour supprimer');el.addEventListener('pointerdown',startDrag);el.addEventListener('dblclick',()=>{state.objects.splice(index,1);renderObjects();persist();notify(item.label+' supprimé')});objectLayer.appendChild(el)});$('#objectCount').textContent=state.objects.length}
-function addObject(key){const data=objects[key];if(!data)return;const n=state.objects.length;state.objects.push({key,label:data[0],category:data[1],x:20+(n%4)*17,y:35+Math.floor(n/4)*13});renderObjects();persist();notify(data[0]+' ajouté — déplace-le dans la scène')}
+function addObject(key){
+ const data=objects[key];if(!data)return;
+ if(state.objects.length>=20){notify('Limite de 20 éléments atteinte');return}
+ const n=state.objects.length;
+ state.objects.push({id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random()),key,label:data[0],category:data[1],x:18+(n%4)*19,y:38+(Math.floor(n/4)%3)*15});
+ renderObjects();persist();notify(data[0]+' ajouté — déplace-le dans la scène');
+}
 let drag=null;function startDrag(e){e.preventDefault();const el=e.currentTarget;drag={el,index:Number(el.dataset.index),pointer:e.pointerId};el.setPointerCapture(e.pointerId);el.addEventListener('pointermove',moveDrag);el.addEventListener('pointerup',endDrag,{once:true});el.addEventListener('pointercancel',endDrag,{once:true})}
 function moveDrag(e){if(!drag)return;const r=scene.getBoundingClientRect(),item=state.objects[drag.index];if(!item)return;item.x=Math.max(1,Math.min(88,(e.clientX-r.left)/r.width*100));item.y=Math.max(3,Math.min(88,(e.clientY-r.top)/r.height*100));drag.el.style.left=item.x+'%';drag.el.style.top=item.y+'%'}
 function endDrag(){if(drag){drag.el.removeEventListener('pointermove',moveDrag);drag=null;persist()}}
@@ -34,12 +46,12 @@ $$('[data-panel]').forEach(b=>b.addEventListener('click',()=>{$$('[data-panel]')
 $$('[data-ambience]').forEach(b=>b.addEventListener('click',()=>{state.ambience=b.dataset.ambience;apply();persist()}));
 $('#saveBtn').addEventListener('click',saveRoom);$('#resetBtn').addEventListener('click',resetRoom);
 $('#toggleLights').addEventListener('click',()=>{state.lights=!state.lights;apply();persist()});$('#lightMode').addEventListener('click',()=>{state.lights=!state.lights;apply();persist()});
-$('#roomNameInput').addEventListener('input',e=>{state.roomName=e.target.value.slice(0,28);$('#sceneRoomName').textContent=state.roomName.toUpperCase();persist()});
-$('#intensity').addEventListener('input',e=>{state.intensity=Number(e.target.value);$('#intensityLabel').textContent=state.intensity+'%';scene.style.setProperty('--led-opacity',state.intensity/100);persist()});
+$('#roomNameInput').addEventListener('input',e=>{state.roomName=e.target.value.slice(0,28);$('#sceneRoomName').textContent=(state.roomName||'MY DREAM ROOM').toUpperCase();persist()});
+$('#intensity').addEventListener('input',e=>{state.intensity=Number(e.target.value);$('#intensityLabel').textContent=state.intensity+'%';scene.style.setProperty('--led-opacity',state.intensity/100);updateSceneLighting();persist()});
 $('#fullscreenBtn').addEventListener('click',()=>{if(scene.requestFullscreen)scene.requestFullscreen().catch(()=>notify('Plein écran indisponible'))});
 let zoom=1;function setZoom(v){zoom=Math.max(.85,Math.min(1.25,v));image.style.transform='scale('+zoom+')';$('#zoomValue').textContent=Math.round(zoom*100)+'%'}$('#zoomIn').addEventListener('click',()=>setZoom(zoom+.05));$('#zoomOut').addEventListener('click',()=>setZoom(zoom-.05));
 $('#exportBtn').addEventListener('click',async()=>{try{if(typeof html2canvas!=='function')throw new Error('Export library unavailable');const canvas=await html2canvas(scene,{useCORS:true,allowTaint:false,backgroundColor:'#211827',scale:2});const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='my-gaming-room.png';a.click();notify('Image de ta chambre exportée')}catch{const blob=new Blob([JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='gaming-room-design.json';a.click();URL.revokeObjectURL(url);notify('Export image indisponible : configuration JSON téléchargée')}});
 $('#settingsBtn').addEventListener('click',()=>{document.querySelector('[data-panel="ambience"]').click();$('#ambience').scrollIntoView({behavior:'smooth',block:'nearest'})});
 $$('[data-category]').forEach(b=>b.addEventListener('click',()=>{$$('[data-category]').forEach(x=>x.classList.toggle('active',x===b));const cat=b.dataset.category;$$('[data-object]').forEach(card=>{const key=card.dataset.object;const category=objects[key][1].toLowerCase();card.style.display=cat==='all'||(cat==='furniture'&&['chair','desk'].includes(key))||(cat==='gaming'&&category==='setup')||(cat==='lighting'&&category==='éclairage')||(cat==='decor'&&['décor','textile'].includes(category))||(cat==='plants'&&key==='plant')||(cat==='walls'&&key==='rug')?'':'none'})}));
-try{const saved=JSON.parse(localStorage.getItem('gamingRoomStudio'));if(saved)state={...defaults,...saved,objects:Array.isArray(saved.objects)?saved.objects:[]};const collection=JSON.parse(localStorage.getItem('gamingRoomSaved'));if(Array.isArray(collection))savedRooms=collection}catch{}
+try{const saved=JSON.parse(localStorage.getItem('gamingRoomStudio'));if(saved)state={...defaults,...saved,objects:Array.isArray(saved.objects)?saved.objects.slice(0,20):[]};const collection=JSON.parse(localStorage.getItem('gamingRoomSaved'));if(Array.isArray(collection))savedRooms=collection.slice(0,12)}catch{state={...defaults,objects:[]};savedRooms=[]}
 apply();setView('studio');
