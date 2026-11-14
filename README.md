@@ -6,7 +6,7 @@ A browser-based isometric gaming-room customizer with a Y2K / gamer-girl visual 
 - CSS-built isometric room illustration
 - Four wall palettes and three floor styles
 - Lighting toggle and customizable LED glow
-- Add and drag decorations around the room
+- Add and drag decorations around the room; double-click a decoration to remove it
 - Rename the room and select a main gaming platform
 - Save the room in browser `localStorage`
 - Export the room artwork as SVG
