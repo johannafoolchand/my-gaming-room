@@ -1,83 +1,33 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101018">
-  <meta name="description" content="My Gaming Room — organise ta bibliothèque de jeux, suis ta progression et garde ta wishlist au même endroit.">
-  <title>My Gaming Room — Your personal game library</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <script src="app.js" defer></script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#171322">
+<meta name="description" content="Design your dream gaming room. Customize colors, lighting and decorations in this playful isometric room builder.">
+<title>My Gaming Room — Design your own space</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"><script src="app.js" defer></script>
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar" id="sidebar">
-      <a class="brand" href="#" aria-label="My Gaming Room, accueil"><span class="brand-mark">M</span><span>MY GAMING<span class="brand-muted">ROOM</span></span></a>
-      <p class="nav-label">WORKSPACE</p>
-      <nav class="main-nav" aria-label="Navigation principale">
-        <a class="nav-link active" href="#overview" data-view="all"><span>▦</span> Overview</a>
-        <a class="nav-link" href="#library" data-view="all"><span>▤</span> My library</a>
-        <a class="nav-link" href="#playing" data-view="playing"><span>◷</span> Currently playing</a>
-        <a class="nav-link" href="#completed" data-view="completed"><span>✓</span> Completed</a>
-        <a class="nav-link" href="#wishlist" data-view="wishlist"><span>♡</span> Wishlist</a>
-      </nav>
-      <div class="sidebar-bottom">
-        <div class="profile-avatar">JG</div>
-        <div><strong>Player one</strong><small>Personal collection</small></div>
-        <span class="profile-dot" aria-label="Local mode"></span>
-      </div>
-    </aside>
-
-    <main class="main-content" id="overview">
-      <header class="topbar">
-        <button class="icon-button menu-toggle" id="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
-        <div class="breadcrumb">Workspace <span>/</span> <strong id="page-title">Overview</strong></div>
-        <div class="topbar-actions"><span class="local-indicator"><i></i> Saved locally</span><button class="avatar-button" aria-label="Profil">JG</button></div>
-      </header>
-
-      <section class="welcome-row">
-        <div><p class="eyebrow">YOUR PERSONAL GAME SPACE</p><h1>Welcome back, Player <span>✦</span></h1><p class="subtitle">Your games, your progress, all in one place.</p></div>
-        <button class="primary-button" id="add-game-button"><span>＋</span> Add a game</button>
-      </section>
-
-      <section class="stats-grid" aria-label="Library statistics">
-        <article class="stat-card"><div class="stat-top"><span>Total games</span><span class="stat-icon violet">▤</span></div><strong id="total-count">0</strong><small>In your collection</small></article>
-        <article class="stat-card"><div class="stat-top"><span>Currently playing</span><span class="stat-icon blue">◷</span></div><strong id="playing-count">0</strong><small>Ready for your next session</small></article>
-        <article class="stat-card"><div class="stat-top"><span>Completed</span><span class="stat-icon green">✓</span></div><strong id="completed-count">0</strong><small>Games finished</small></article>
-        <article class="stat-card"><div class="stat-top"><span>Wishlist</span><span class="stat-icon pink">♡</span></div><strong id="wishlist-count">0</strong><small>On your radar</small></article>
-      </section>
-
-      <section class="library-section" id="library">
-        <div class="section-heading"><div><p class="eyebrow">YOUR COLLECTION</p><h2 id="library-heading">My library <span id="visible-count">0</span></h2></div><button class="text-button" id="clear-filters">Reset filters ↗</button></div>
-        <div class="toolbar">
-          <label class="search-box"><span>⌕</span><input id="search-input" type="search" placeholder="Search your games..." aria-label="Search games"></label>
-          <label class="select-wrap"><span class="sr-only">Platform</span><select id="platform-filter"><option value="all">All platforms</option><option>PC</option><option>PlayStation 5</option><option>PlayStation 4</option><option>Xbox</option><option>Nintendo Switch</option><option>Other</option></select></label>
-          <label class="select-wrap"><span class="sr-only">Sort</span><select id="sort-filter"><option value="recent">Recently added</option><option value="az">Name: A–Z</option><option value="za">Name: Z–A</option></select></label>
-        </div>
-        <div class="filter-tabs" role="group" aria-label="Filter by status">
-          <button class="filter-tab active" data-filter="all">All games</button><button class="filter-tab" data-filter="playing">Playing</button><button class="filter-tab" data-filter="completed">Completed</button><button class="filter-tab" data-filter="wishlist">Wishlist</button><button class="filter-tab" data-filter="backlog">Backlog</button>
-        </div>
-        <div class="game-grid" id="game-grid" aria-live="polite"></div>
-        <div class="empty-state" id="empty-state" hidden><div class="empty-icon">✧</div><h3>No games found</h3><p>Try another search or add your first game to the library.</p><button class="primary-button" id="empty-add-button">＋ Add a game</button></div>
-      </section>
-      <footer class="footer"><span>MY GAMING ROOM</span><span>Built for players, by a player.</span><span>Data stays on this device.</span></footer>
-    </main>
-  </div>
-
-  <dialog class="game-dialog" id="game-dialog">
-    <form id="game-form">
-      <div class="dialog-heading"><div><p class="eyebrow">EXPAND YOUR COLLECTION</p><h2 id="dialog-title">Add a game</h2></div><button type="button" class="icon-button" id="close-dialog" aria-label="Close">✕</button></div>
-      <label>Game title<input name="title" id="game-title" maxlength="70" placeholder="e.g. Cyberpunk 2077" required></label>
-      <div class="form-row"><label>Platform<select name="platform" required><option value="PC">PC</option><option value="PlayStation 5">PlayStation 5</option><option value="PlayStation 4">PlayStation 4</option><option value="Xbox">Xbox</option><option value="Nintendo Switch">Nintendo Switch</option><option value="Other">Other</option></select></label><label>Status<select name="status" required><option value="playing">Currently playing</option><option value="completed">Completed</option><option value="wishlist">Wishlist</option><option value="backlog">Backlog</option></select></label></div>
-      <label>Genre <input name="genre" maxlength="35" placeholder="e.g. Action RPG"></label>
-      <label>Cover image URL <input name="cover" type="url" placeholder="https://… (optional)"></label>
-      <p class="form-hint">Your collection is saved in your browser using local storage.</p>
-      <div class="dialog-actions"><button type="button" class="secondary-button" id="cancel-dialog">Cancel</button><button class="primary-button" type="submit">Save game</button></div>
-    </form>
-  </dialog>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-</body>
-</html>
+<header class="topbar"><a class="brand" href="#"><span class="brand-icon">✦</span> MY GAMING <b>ROOM</b></a><div class="top-actions"><span class="save-state" id="save-state">● Saved on this device</span><button class="button button-ghost" id="reset-room">Reset</button><button class="button button-primary" id="export-room">↗ Export room</button></div></header>
+<main class="layout">
+<section class="intro"><div><p class="eyebrow">YOUR SPACE. YOUR RULES.</p><h1>Build your <span>dream room.</span></h1><p class="intro-copy">A little corner of the internet to create the gaming setup you've always wanted.</p></div><label class="room-name-wrap">ROOM NAME<input id="room-name" maxlength="28" value="Pixel Paradise" aria-label="Room name"></label></section>
+<section class="workspace">
+<div class="room-panel"><div class="room-toolbar"><div><span class="live-dot"></span> LIVE PREVIEW <span class="room-subtitle" id="room-title">/ Pixel Paradise</span></div><button class="button button-ghost button-small" id="light-toggle" aria-pressed="true">☼ Lights on</button></div>
+<div class="room-stage" id="room-stage"><div class="room-glow"></div><div class="room" id="room">
+<div class="back-wall" id="back-wall"><div class="wall-window"><span></span><i></i></div><div class="wall-poster">GAME<br><b>OVER</b><small>✦ PLAY MORE ✦</small></div><div class="wall-shelf"><i>♧</i><i>▣</i><i>✦</i></div></div>
+<div class="side-wall"></div><div class="floor" id="floor"><div class="rug"></div><div class="desk"><div class="desk-top"></div><div class="desk-leg left"></div><div class="desk-leg right"></div><div class="monitor"><div class="monitor-screen"><span>GAME<br>ON</span></div><div class="monitor-stand"></div></div><div class="keyboard">▰ ▰ ▰ ▰ ▰</div><div class="mouse"></div></div><div class="chair"><div class="chair-back"></div><div class="chair-seat"></div><div class="chair-base"></div></div><div class="tower"><div class="tower-glass"><i></i><i></i><i></i></div></div></div>
+<div id="decor-layer" class="decor-layer" aria-label="Room decorations"></div></div></div>
+<div class="stage-caption"><span>✦ Drag decorations to move them around</span><span>ISOMETRIC ROOM · 2D EDITOR</span></div></div>
+<aside class="controls">
+<div class="control-heading"><div><p class="eyebrow">THE CONTROL ROOM</p><h2>Make it yours<span> ✧</span></h2></div></div>
+<div class="control-group"><h3><span>01</span> Wall palette</h3><div class="swatches" id="wall-swatches"><button class="swatch selected" data-color="pink" style="--swatch:#e8b9db" aria-label="Pink walls"></button><button class="swatch" data-color="lilac" style="--swatch:#c7b7ed" aria-label="Lilac walls"></button><button class="swatch" data-color="blue" style="--swatch:#a9cce8" aria-label="Blue walls"></button><button class="swatch" data-color="dark" style="--swatch:#66617e" aria-label="Dark walls"></button></div></div>
+<div class="control-group"><h3><span>02</span> Floor style</h3><div class="choice-row" id="floor-choices"><button class="choice selected" data-floor="wood">▤ Wood</button><button class="choice" data-floor="checker">▦ Checker</button><button class="choice" data-floor="pink">▧ Pink</button></div></div>
+<div class="control-group"><h3><span>03</span> Lighting</h3><div class="setting-row"><span>LED glow</span><input id="glow-range" type="range" min="0" max="100" value="65"><output id="glow-value">65%</output></div></div>
+<div class="control-group"><h3><span>04</span> Add decorations</h3><p class="helper">Choose an item, then drag it into position.</p><div class="decor-options" id="decor-options"><button class="decor-option" data-decor="plant"><span>🪴</span> Plant</button><button class="decor-option" data-decor="star"><span>⭐</span> Star</button><button class="decor-option" data-decor="console"><span>🎮</span> Console</button><button class="decor-option" data-decor="lamp"><span>💡</span> Lamp</button><button class="decor-option" data-decor="cat"><span>🐈</span> Cat</button><button class="decor-option" data-decor="heart"><span>💗</span> Heart</button></div><button class="button button-ghost clear-decor" id="clear-decor">Remove all decorations</button></div>
+<div class="control-group"><h3><span>05</span> Your platform</h3><select class="platform-select" id="platform"><option>PlayStation 5</option><option>PC Master Race</option><option>Xbox</option><option>Nintendo Switch</option><option>Multi-platform</option></select></div>
+<div class="controls-footer">✧ Your design saves automatically in this browser.</div>
+</aside></section>
+<footer><span>MY GAMING ROOM <b>✦</b></span><span>Made for the love of gaming.</span><span>LOCAL SAVE · NO ACCOUNT NEEDED</span></footer>
+</main><div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body></html>
