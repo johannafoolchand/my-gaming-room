@@ -194,13 +194,13 @@ function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));localSt
 function saveRoom(){const snap=JSON.parse(JSON.stringify(state));snap.savedAt=new Date().toISOString();savedRooms.unshift(snap);savedRooms=savedRooms.slice(0,20);persist();renderSaved();notify('Configuration sauvegardée')}
 function restoreRoom(r){
  for(const o of [...world.children])if(o.userData.instanceId)world.remove(o);
- state={...defaults,...JSON.parse(JSON.stringify(r)),objects:[]};wallMeshes.forEach(w=>w.material=mat(state.wall));applyTheme(state.theme);setFloor(state.floor);setGame(state.game);
+ state={...defaults,...JSON.parse(JSON.stringify(r)),objects:[]};wallMeshes.forEach(w=>w.material=mat(state.wall));setFloor(state.floor);applyTheme(state.theme);setGame(state.game);
  state.objects=[];(r.objects||[]).forEach(x=>addFurniture(x.catalogId,x));selectObject(null);
  $('#sceneRoomName').textContent=state.roomName.toUpperCase();setLights();setView('studio');persist();notify('Chambre chargée');
 }
 function resetRoom(){
  for(const o of [...world.children])if(o.userData.instanceId)world.remove(o);
- state=structuredClone(defaults);wallMeshes.forEach(w=>w.material=mat(state.wall));applyTheme('pink');setFloor('wood');setGame('spiderman');
+ state=structuredClone(defaults);wallMeshes.forEach(w=>w.material=mat(state.wall));setFloor('wood');applyTheme('pink');setGame('spiderman');
  ['bed','desk','chair','monitor','pc','rug'].forEach(id=>addFurniture(id));selectObject(null);$('#sceneRoomName').textContent=state.roomName.toUpperCase();setLights();persist();notify('Pièce réinitialisée');
 }
 function exportConfig(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='my-gaming-room.json';a.click();URL.revokeObjectURL(url);notify('Configuration JSON exportée')}
@@ -220,7 +220,7 @@ function init(){
  if(records.length){records.forEach(r=>addFurniture(r.catalogId,r));selectObject(null)}
  else ['bed','desk','chair','monitor','pc','rug'].forEach(id=>addFurniture(id));
  $('#sceneRoomName').textContent=(state.roomName||'MY DREAM ROOM').toUpperCase();$('#roomNameInput').value=state.roomName;
- applyTheme(state.theme);setFloor(state.floor);setGame(state.game);$('#ledColor').value=state.led;$('#intensity').value=state.intensity;$('#intensityLabel').textContent=state.intensity+'%';setLights();
+ setFloor(state.floor);applyTheme(state.theme);setGame(state.game);$('#ledColor').value=state.led;$('#intensity').value=state.intensity;$('#intensityLabel').textContent=state.intensity+'%';setLights();
  renderCatalog();renderSaved();refreshCount();selectObject(null);
  $('#engineStatus').textContent='● MOTEUR 3D ACTIF';$('#sceneHint').textContent='Glisse pour tourner · Molette pour zoomer · Glisse un meuble pour le déplacer';
  const animate=()=>{requestAnimationFrame(animate);controls.update();renderer.render(world,camera)};animate();
