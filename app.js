@@ -221,7 +221,7 @@ function init(){
  else ['bed','desk','chair','monitor','pc','rug'].forEach(id=>addFurniture(id));
  $('#sceneRoomName').textContent=(state.roomName||'MY DREAM ROOM').toUpperCase();$('#roomNameInput').value=state.roomName;
  setFloor(state.floor);applyTheme(state.theme);setGame(state.game);$('#ledColor').value=state.led;$('#intensity').value=state.intensity;$('#intensityLabel').textContent=state.intensity+'%';setLights();
- renderCatalog();renderSaved();refreshCount();selectObject(null);
+ renderCatalog();renderSaved();refreshCount();selectObject(null);document.querySelector('[data-panel="themes"]').click();
  $('#engineStatus').textContent='● MOTEUR 3D ACTIF';$('#sceneHint').textContent='Glisse pour tourner · Molette pour zoomer · Glisse un meuble pour le déplacer';
  const animate=()=>{requestAnimationFrame(animate);controls.update();renderer.render(world,camera)};animate();
 }
