@@ -1,5 +1,13 @@
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+  page.on('console', message => {
+    if (message.type() === 'error') console.log('[browser console error]', message.text());
+  });
+  page.on('pageerror', error => console.log('[browser pageerror]', error.stack || error.message));
+  page.on('requestfailed', request => console.log('[request failed]', request.url(), request.failure()?.errorText));
+});
+
 test('loads the real 3D room and its initial furniture', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
