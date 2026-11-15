@@ -110,6 +110,7 @@ function buildRoom(){
  const fill=new THREE.PointLight(0xb6c9ff,1.1,10);fill.position.set(-3,2.5,-1);world.add(fill);world.add(new THREE.HemisphereLight(0xe9d7f5,0x5a4358,1.25));
 }
 function colorObject(g,c){g.traverse(o=>{if(o.isMesh&&o.material&&!o.userData.gameScreen)o.material=mat(c,o.material.roughness,o.material.metalness)})}
+function applyGameTextureToGroup(g){g.traverse(o=>{if(o.userData.gameScreen&&screenTexture)o.material=new THREE.MeshStandardMaterial({map:screenTexture,emissiveMap:screenTexture,emissive:0xffffff,emissiveIntensity:.25,roughness:.2})})}
 function setGame(key){
  state.game=games[key]?key:'spiderman';screenTexture?.dispose();screenTexture=makeGameTexture(state.game);
  world.traverse(o=>{if(o.userData.gameScreen)o.material=new THREE.MeshStandardMaterial({map:screenTexture,emissiveMap:screenTexture,emissive:0xffffff,emissiveIntensity:.25,roughness:.2})});
@@ -150,7 +151,7 @@ function addFurniture(id,record){
  if(state.objects.length>=60){notify('Limite de 60 objets atteinte');return}
  const obj=buildFurniture(def),r=record||{instanceId:crypto.randomUUID(),catalogId:id,position:placePosition(def.kind),rotation:0,scale:1,color:def.color};
  obj.userData.instanceId=r.instanceId;obj.position.fromArray(r.position||placePosition(def.kind));obj.rotation.y=r.rotation||0;obj.scale.setScalar(r.scale||1);if(r.color)colorObject(obj,r.color);
- world.add(obj);state.objects.push(r);selectObject(obj);$('#objectCount').textContent=state.objects.length;persist();return obj;
+ world.add(obj);applyGameTextureToGroup(obj);state.objects.push(r);selectObject(obj);$('#objectCount').textContent=state.objects.length;persist();return obj;
 }
 function removeSelected(){
  if(!selected)return;const id=selected.userData.instanceId;world.remove(selected);state.objects=state.objects.filter(x=>x.instanceId!==id);selected=null;selectObject(null);refreshCount();persist();notify('Objet supprimé');
@@ -209,7 +210,7 @@ function init(){
  buildRoom();
  renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;host.appendChild(renderer.domElement);
  camera=new THREE.PerspectiveCamera(42,1,.1,100);camera.position.set(7,6.2,9);
- controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,1.1,0);controls.enableDamping=true;controls.dampingFactor=.07;controls.minDistance=5;controls.maxDistance=17;controls.maxPolarAngle=Math.PI*.485;
+ controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,1.1,0);controls.enableDamping=true;controls.dampingFactor=.07;controls.minDistance=5;controls.maxDistance=17;controls.maxPolarAngle=Math.PI*.485;controls.minAzimuthAngle=-1.35;controls.maxAzimuthAngle=1.35;
  raycaster=new THREE.Raycaster();pointer=new THREE.Vector2();
  const resize=()=>{const r=host.getBoundingClientRect();if(!r.width||!r.height)return;renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix()};
  new ResizeObserver(resize).observe(host);window.addEventListener('resize',resize);resize();
