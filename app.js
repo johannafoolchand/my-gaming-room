@@ -127,7 +127,7 @@ function applyTheme(key){
  if(mainLight)mainLight.color.set(state.led);$('#styleName').textContent=p.label;$('#ledColor').value=state.led;
  $$('[data-theme]').forEach(b=>b.classList.toggle('selected',b.dataset.theme===key));persist();
 }
-function setFloor(f){const finish=['wood','dark','stone'].includes(f)?f:'wood';state.floor=finish;floorMesh.material=mat(finish==='dark'?'#51414b':finish==='stone'?'#a59da9':'#bd9478',.9);$('[data-finish]').forEach(b=>b.classList.toggle('selected',b.dataset.finish===finish));persist()}
+function setFloor(f){const finish=['wood','dark','stone'].includes(f)?f:'wood';state.floor=finish;floorMesh.material=mat(finish==='dark'?'#51414b':finish==='stone'?'#a59da9':'#bd9478',.9);$$('[data-finish]').forEach(b=>b.classList.toggle('selected',b.dataset.finish===finish));persist()}
 function placePosition(kind){
  const map={bed:[-2.45,0,1.55],desk:[-.1,0,-2.35],chair:[-.1,0,-.95],monitor:[-.1,1.18,-2.42],monitorSmall:[1.1,1.18,-2.42],pc:[1.22,.08,-2.15],lamp:[2.85,0,-2.5],plant:[3,0,2.6],rug:[0,.02,.45],sofa:[2.5,0,1],poster:[-1.7,1.5,-3.37],shelf:[1.6,1.8,-3.38],console:[1.6,1.15,-2.3],keyboard:[-.1,1.2,-1.8],headset:[.9,1.17,-1.9],led:[-3.5,0,0]};
  return map[kind]||[0,0,0];
@@ -229,8 +229,8 @@ $$('.nav-link').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view
 $$('[data-category]').forEach(b=>b.addEventListener('click',()=>{$$('[data-category]').forEach(x=>x.classList.toggle('active',x===b));if(b.dataset.category==='walls'){document.querySelector('[data-panel="colors"]').click();return}renderCatalog(b.dataset.category);$('#cataloguePanel').scrollIntoView({behavior:'smooth',block:'nearest'})}));
 $('#settingsBtn').onclick=()=>document.querySelector('[data-panel="colors"]').click();
 $$('[data-theme]').forEach(b=>b.addEventListener('click',()=>applyTheme(b.dataset.theme)));
-$('[data-wall]').forEach(b=>b.addEventListener('click',()=>{state.wall=b.dataset.wall;wallMeshes.forEach(w=>w.material=mat(state.wall));$('[data-wall]').forEach(x=>x.classList.toggle('selected',x===b));persist()}));
-$$('[data-finish]').forEach(b=>b.addEventListener('click',()=>setFloor(b.dataset.finish)));
+$$('[data-wall]').forEach(b=>b.addEventListener('click',()=>{state.wall=b.dataset.wall;wallMeshes.forEach(w=>w.material=mat(state.wall));$$('[data-wall]').forEach(x=>x.classList.toggle('selected',x===b));persist()}));
+$$$('[data-finish]').forEach(b=>b.addEventListener('click',()=>setFloor(b.dataset.finish)));
 $$('[data-panel]').forEach(b=>b.addEventListener('click',()=>{$$('[data-panel]').forEach(x=>x.classList.toggle('active',x===b));$$('.panel-content').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel))}));
 $('#saveBtn').onclick=saveRoom;$('#resetBtn').onclick=resetRoom;$('#exportBtn').onclick=exportConfig;
 $('#toggleLights').onclick=$('#lightMode').onclick=()=>{state.lights=!state.lights;setLights();persist()};
