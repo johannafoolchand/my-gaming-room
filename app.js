@@ -123,11 +123,11 @@ function setLights(){
 }
 function applyTheme(key){
  const p=palettes[key]||palettes.pink;state.theme=key;state.wall=p.wall;state.led=p.led;
- wallMeshes.forEach(w=>w.material=mat(state.wall));if(floorMesh)floorMesh.material=mat(p.floor,.9);ledMeshes.forEach(l=>l.material=mat(state.led));
+ wallMeshes.forEach(w=>w.material=mat(state.wall));ledMeshes.forEach(l=>l.material=mat(state.led));
  if(mainLight)mainLight.color.set(state.led);$('#styleName').textContent=p.label;$('#ledColor').value=state.led;
  $$('[data-theme]').forEach(b=>b.classList.toggle('selected',b.dataset.theme===key));persist();
 }
-function setFloor(f){state.floor=f;floorMesh.material=mat(f==='dark'?'#51414b':f==='stone'?'#a59da9':'#bd9478',.9);$$('[data-finish]').forEach(b=>b.classList.toggle('selected',b.dataset.finish===f));persist()}
+function setFloor(f){const finish=['wood','dark','stone'].includes(f)?f:'wood';state.floor=finish;floorMesh.material=mat(finish==='dark'?'#51414b':finish==='stone'?'#a59da9':'#bd9478',.9);$('[data-finish]').forEach(b=>b.classList.toggle('selected',b.dataset.finish===finish));persist()}
 function placePosition(kind){
  const map={bed:[-2.45,0,1.55],desk:[-.1,0,-2.35],chair:[-.1,0,-.95],monitor:[-.1,1.18,-2.42],monitorSmall:[1.1,1.18,-2.42],pc:[1.22,.08,-2.15],lamp:[2.85,0,-2.5],plant:[3,0,2.6],rug:[0,.02,.45],sofa:[2.5,0,1],poster:[-1.7,1.5,-3.37],shelf:[1.6,1.8,-3.38],console:[1.6,1.15,-2.3],keyboard:[-.1,1.2,-1.8],headset:[.9,1.17,-1.9],led:[-3.5,0,0]};
  return map[kind]||[0,0,0];
@@ -191,7 +191,7 @@ function renderSaved(){
  });
 }
 function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));localStorage.setItem(SAVED,JSON.stringify(savedRooms))}catch{notify('Stockage local saturé')}}
-function saveRoom(){const snap=JSON.parse(JSON.stringify(state));snap.savedAt=new Date().toISOString();savedRooms.unshift(snap);savedRooms=savedRooms.slice(0,20);persist();renderSaved();notify('Configuration sauvegardée')}
+function saveRoom(){const snap=JSON.parse(JSON.stringify(state));snap.selectedId=null;snap.savedAt=new Date().toISOString();savedRooms.unshift(snap);savedRooms=savedRooms.slice(0,20);persist();renderSaved();notify('Configuration sauvegardée')}
 function restoreRoom(r){
  for(const o of [...world.children])if(o.userData.instanceId)world.remove(o);
  state={...defaults,...JSON.parse(JSON.stringify(r)),objects:[]};wallMeshes.forEach(w=>w.material=mat(state.wall));setFloor(state.floor);applyTheme(state.theme);setGame(state.game);
@@ -200,10 +200,10 @@ function restoreRoom(r){
 }
 function resetRoom(){
  for(const o of [...world.children])if(o.userData.instanceId)world.remove(o);
- state=structuredClone(defaults);wallMeshes.forEach(w=>w.material=mat(state.wall));setFloor('wood');applyTheme('pink');setGame('spiderman');
+ state=structuredClone(defaults);wallMeshes.forEach(w=>w.material=mat(state.wall));applyTheme('pink');setFloor('wood');setGame('spiderman');
  ['bed','desk','chair','monitor','pc','rug'].forEach(id=>addFurniture(id));selectObject(null);$('#sceneRoomName').textContent=state.roomName.toUpperCase();setLights();persist();notify('Pièce réinitialisée');
 }
-function exportConfig(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='my-gaming-room.json';a.click();URL.revokeObjectURL(url);notify('Configuration JSON exportée')}
+function exportConfig(){const payload={...state,objects:state.objects.map(o=>({...o}))};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='my-gaming-room.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Configuration JSON exportée')}
 
 function init(){
  const saved=parse(localStorage.getItem(STORE),null);if(saved)state={...defaults,...saved,objects:[]};savedRooms=parse(localStorage.getItem(SAVED),[]);if(!Array.isArray(savedRooms))savedRooms=[];
@@ -220,7 +220,7 @@ function init(){
  if(records.length){records.forEach(r=>addFurniture(r.catalogId,r));selectObject(null)}
  else ['bed','desk','chair','monitor','pc','rug'].forEach(id=>addFurniture(id));
  $('#sceneRoomName').textContent=(state.roomName||'MY DREAM ROOM').toUpperCase();$('#roomNameInput').value=state.roomName;
- setFloor(state.floor);applyTheme(state.theme);setGame(state.game);$('#ledColor').value=state.led;$('#intensity').value=state.intensity;$('#intensityLabel').textContent=state.intensity+'%';setLights();
+ applyTheme(state.theme);setFloor(state.floor);setGame(state.game);$('#ledColor').value=state.led;$('#intensity').value=state.intensity;$('#intensityLabel').textContent=state.intensity+'%';setLights();
  renderCatalog();renderSaved();refreshCount();selectObject(null);document.querySelector('[data-panel="themes"]').click();
  $('#engineStatus').textContent='● MOTEUR 3D ACTIF';$('#sceneHint').textContent='Glisse pour tourner · Molette pour zoomer · Glisse un meuble pour le déplacer';
  const animate=()=>{requestAnimationFrame(animate);controls.update();renderer.render(world,camera)};animate();
@@ -229,7 +229,7 @@ $$('.nav-link').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view
 $$('[data-category]').forEach(b=>b.addEventListener('click',()=>{$$('[data-category]').forEach(x=>x.classList.toggle('active',x===b));if(b.dataset.category==='walls'){document.querySelector('[data-panel="colors"]').click();return}renderCatalog(b.dataset.category);$('#cataloguePanel').scrollIntoView({behavior:'smooth',block:'nearest'})}));
 $('#settingsBtn').onclick=()=>document.querySelector('[data-panel="colors"]').click();
 $$('[data-theme]').forEach(b=>b.addEventListener('click',()=>applyTheme(b.dataset.theme)));
-$$('[data-wall]').forEach(b=>b.addEventListener('click',()=>{state.wall=b.dataset.wall;wallMeshes.forEach(w=>w.material=mat(state.wall));$$('[data-wall]').forEach(x=>x.classList.toggle('selected',x===b));persist()}));
+$('[data-wall]').forEach(b=>b.addEventListener('click',()=>{state.wall=b.dataset.wall;wallMeshes.forEach(w=>w.material=mat(state.wall));$('[data-wall]').forEach(x=>x.classList.toggle('selected',x===b));persist()}));
 $$('[data-finish]').forEach(b=>b.addEventListener('click',()=>setFloor(b.dataset.finish)));
 $$('[data-panel]').forEach(b=>b.addEventListener('click',()=>{$$('[data-panel]').forEach(x=>x.classList.toggle('active',x===b));$$('.panel-content').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel))}));
 $('#saveBtn').onclick=saveRoom;$('#resetBtn').onclick=resetRoom;$('#exportBtn').onclick=exportConfig;
