@@ -123,7 +123,7 @@ function setLights(){
 }
 function applyTheme(key){
  const p=palettes[key]||palettes.pink;state.theme=key;state.wall=p.wall;state.led=p.led;
- wallMeshes.forEach(w=>w.material=mat(state.wall));ledMeshes.forEach(l=>l.material=mat(state.led));
+ wallMeshes.forEach(w=>w.material=mat(state.wall));if(floorMesh)floorMesh.material=mat(p.floor,.9);ledMeshes.forEach(l=>l.material=mat(state.led));
  if(mainLight)mainLight.color.set(state.led);$('#styleName').textContent=p.label;$('#ledColor').value=state.led;
  $$('[data-theme]').forEach(b=>b.classList.toggle('selected',b.dataset.theme===key));persist();
 }
@@ -226,7 +226,8 @@ function init(){
  const animate=()=>{requestAnimationFrame(animate);controls.update();renderer.render(world,camera)};animate();
 }
 $$('.nav-link').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
-$$('[data-category]').forEach(b=>b.addEventListener('click',()=>{$$('[data-category]').forEach(x=>x.classList.toggle('active',x===b));renderCatalog(b.dataset.category);$('#cataloguePanel').scrollIntoView({behavior:'smooth',block:'nearest'})}));
+$('[data-category]').forEach(b=>b.addEventListener('click',()=>{$('[data-category]').forEach(x=>x.classList.toggle('active',x===b));if(b.dataset.category==='walls'){document.querySelector('[data-panel="colors"]').click();return}renderCatalog(b.dataset.category);$('#cataloguePanel').scrollIntoView({behavior:'smooth',block:'nearest'})}));
+$('#settingsBtn').onclick=()=>document.querySelector('[data-panel="colors"]').click();
 $$('[data-theme]').forEach(b=>b.addEventListener('click',()=>applyTheme(b.dataset.theme)));
 $$('[data-wall]').forEach(b=>b.addEventListener('click',()=>{state.wall=b.dataset.wall;wallMeshes.forEach(w=>w.material=mat(state.wall));$$('[data-wall]').forEach(x=>x.classList.toggle('selected',x===b));persist()}));
 $$('[data-finish]').forEach(b=>b.addEventListener('click',()=>setFloor(b.dataset.finish)));
