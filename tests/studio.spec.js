@@ -50,3 +50,27 @@ test('room controls remain usable on a mobile viewport', async ({ page }) => {
   await page.getByRole('button', { name: 'Enregistrer' }).click();
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('gamingRoomSaved3D') || '[]').length)).toBe(1);
 });
+
+
+test('keeps the chosen floor finish when changing and reloading a theme', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
+  await page.locator('[data-finish="stone"]').click();
+  await page.locator('[data-theme="cyber"]').click();
+  await page.locator('#saveBtn').click();
+  await page.reload();
+  await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
+  await expect(page.locator('[data-finish="stone"]')).toHaveClass(/selected/);
+  await page.getByRole('button', { name: 'Sauvegardes' }).click();
+  await page.getByRole('button', { name: 'Ouvrir' }).first().click();
+  await expect(page.locator('[data-finish="stone"]')).toHaveClass(/selected/);
+});
+
+test('exports the current room as a JSON file', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
+  const downloadPromise = page.waitForEvent('download');
+  await page.locator('#exportBtn').click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe('my-gaming-room.json');
+});
