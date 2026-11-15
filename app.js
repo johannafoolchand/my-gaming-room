@@ -230,7 +230,7 @@ $$('[data-category]').forEach(b=>b.addEventListener('click',()=>{$$('[data-categ
 $('#settingsBtn').onclick=()=>document.querySelector('[data-panel="colors"]').click();
 $$('[data-theme]').forEach(b=>b.addEventListener('click',()=>applyTheme(b.dataset.theme)));
 $$('[data-wall]').forEach(b=>b.addEventListener('click',()=>{state.wall=b.dataset.wall;wallMeshes.forEach(w=>w.material=mat(state.wall));$$('[data-wall]').forEach(x=>x.classList.toggle('selected',x===b));persist()}));
-$$$('[data-finish]').forEach(b=>b.addEventListener('click',()=>setFloor(b.dataset.finish)));
+$$('[data-finish]').forEach(b=>b.addEventListener('click',()=>setFloor(b.dataset.finish)));
 $$('[data-panel]').forEach(b=>b.addEventListener('click',()=>{$$('[data-panel]').forEach(x=>x.classList.toggle('active',x===b));$$('.panel-content').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel))}));
 $('#saveBtn').onclick=saveRoom;$('#resetBtn').onclick=resetRoom;$('#exportBtn').onclick=exportConfig;
 $('#toggleLights').onclick=$('#lightMode').onclick=()=>{state.lights=!state.lights;setLights();persist()};
