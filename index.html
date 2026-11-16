@@ -9,11 +9,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css?v=3d-studio-1">
+  <link rel="stylesheet" href="./styles.css?v=3d-studio-2">
   <script type="importmap">
     {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}
   </script>
-  <script type="module" src="./app.js?v=3d-studio-1"></script>
+  <script type="module" src="./app.js?v=3d-studio-2"></script>
 </head>
 <body>
 <div class="app-shell">
@@ -100,7 +100,7 @@
           <label class="property-label" for="objectColor">Couleur</label><input id="objectColor" type="color" value="#d9b3d6">
           <label class="property-label" for="objectScale">Taille <span id="scaleValue">100%</span></label><input id="objectScale" class="range-input" type="range" min="65" max="140" value="100">
           <label class="property-label" for="objectRotation">Rotation <span id="rotationValue">0°</span></label><input id="objectRotation" class="range-input" type="range" min="0" max="355" step="5" value="0">
-          <div class="property-actions"><button class="subtle-button" id="duplicateBtn">Dupliquer</button><button class="danger-button" id="deleteBtn">Supprimer</button></div>
+          <div class="rotation-actions"><button class="subtle-button" id="rotateLeftBtn" title="Tourner de 15 degrés">↶ −15°</button><button class="subtle-button" id="rotateRightBtn" title="Tourner de 15 degrés">+15° ↷</button></div><p class="helper-copy">Astuce : maintiens Maj et glisse pour faire pivoter, ou utilise Q / E.</p><div class="property-actions"><button class="subtle-button" id="duplicateBtn">Dupliquer</button><button class="danger-button" id="deleteBtn">Supprimer</button></div>
           <p class="helper-copy">Déplace l'objet directement dans la scène avec la souris ou le doigt.</p>
         </div>
       </div>

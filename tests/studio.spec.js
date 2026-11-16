@@ -12,14 +12,14 @@ test('loads the real 3D room and its initial furniture', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
   await expect(page.locator('#scene3d canvas')).toBeVisible();
-  await expect(page.locator('#objectCount')).toHaveText('6');
+  await expect(page.locator('#objectCount')).toHaveText('15');
 });
 
 test('adds furniture and exposes object properties', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
   await page.getByRole('button', { name: /Fauteuil gaming/ }).click();
-  await expect(page.locator('#objectCount')).toHaveText('7');
+  await expect(page.locator('#objectCount')).toHaveText('16');
   await expect(page.locator('#objectProperties')).toBeVisible();
   await expect(page.locator('#selectedName')).toContainText('Fauteuil gaming');
 });
@@ -33,7 +33,7 @@ test('applies room themes and saves the current configuration', async ({ page })
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('gamingRoomSaved3D') || '[]').length)).toBe(1);
   await page.reload();
   await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
-  await expect(page.locator('#objectCount')).toHaveText('6');
+  await expect(page.locator('#objectCount')).toHaveText('15');
 });
 
 test('game selector updates the selected PS5 screen preview', async ({ page }) => {
@@ -73,4 +73,47 @@ test('exports the current room as a JSON file', async ({ page }) => {
   await page.locator('#exportBtn').click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe('my-gaming-room.json');
+});
+
+
+test('upgrades a legacy saved room without losing existing furniture', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('gamingRoomSaved3D', JSON.stringify([{
+      roomName: 'Old room', theme: 'pink', floor: 'wood', game: 'spiderman',
+      objects: [
+        { instanceId: 'legacy-bed', catalogId: 'bed', position: [-2.45, 0, 1.55], rotation: 0, scale: 1, color: '#d9c4d8' },
+        { instanceId: 'legacy-desk', catalogId: 'desk', position: [-.1, 0, -2.35], rotation: 0, scale: 1, color: '#5d4b61' }
+      ]
+    }]));
+  });
+  await page.goto('/');
+  await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
+  await page.getByRole('button', { name: 'Sauvegardes' }).click();
+  await page.getByRole('button', { name: 'Ouvrir' }).first().click();
+  await expect(page.locator('#objectCount')).toHaveText('11');
+  const ids = await page.evaluate(() => JSON.parse(localStorage.getItem('gamingRoomStudio3D') || '{}').objects.map(item => item.catalogId));
+  expect(ids).toContain('bed');
+  expect(ids).toContain('desk');
+  expect(ids).toContain('ps5');
+  expect(ids).toContain('dualsense');
+});
+
+test('starts with a complete PlayStation gaming setup', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
+  await expect(page.locator('#objectCount')).toHaveText('15');
+  const ids = await page.evaluate(() => JSON.parse(localStorage.getItem('gamingRoomStudio3D') || '{}').objects.map(item => item.catalogId));
+  expect(ids).toContain('ps5');
+  expect(ids).toContain('dualsense');
+  expect(ids).toContain('headset');
+});
+
+test('rotates the selected object with the rotation buttons', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
+  await page.getByRole('button', { name: /PlayStation 5/ }).click();
+  await page.locator('#rotateRightBtn').click();
+  await expect(page.locator('#rotationValue')).toHaveText('15°');
+  const rotation = await page.evaluate(() => JSON.parse(localStorage.getItem('gamingRoomStudio3D')).objects.filter(item => item.catalogId === 'ps5').at(-1).rotation);
+  expect(rotation).toBeCloseTo(Math.PI / 12, 4);
 });
