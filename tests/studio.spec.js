@@ -76,6 +76,28 @@ test('exports the current room as a JSON file', async ({ page }) => {
 });
 
 
+test('upgrades a legacy saved room without losing existing furniture', async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('gamingRoomSaved3D', JSON.stringify([{
+      roomName: 'Old room', theme: 'pink', floor: 'wood', game: 'spiderman',
+      objects: [
+        { instanceId: 'legacy-bed', catalogId: 'bed', position: [-2.45, 0, 1.55], rotation: 0, scale: 1, color: '#d9c4d8' },
+        { instanceId: 'legacy-desk', catalogId: 'desk', position: [-.1, 0, -2.35], rotation: 0, scale: 1, color: '#5d4b61' }
+      ]
+    }]));
+  });
+  await page.goto('/');
+  await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
+  await page.getByRole('button', { name: 'Sauvegardes' }).click();
+  await page.getByRole('button', { name: 'Ouvrir' }).first().click();
+  await expect(page.locator('#objectCount')).toHaveText('11');
+  const ids = await page.evaluate(() => JSON.parse(localStorage.getItem('gamingRoomStudio3D') || '{}').objects.map(item => item.catalogId));
+  expect(ids).toContain('bed');
+  expect(ids).toContain('desk');
+  expect(ids).toContain('ps5');
+  expect(ids).toContain('dualsense');
+});
+
 test('starts with a complete PlayStation gaming setup', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
