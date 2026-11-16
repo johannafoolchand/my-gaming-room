@@ -229,7 +229,7 @@ function init(){
  renderer.domElement.addEventListener('pointerdown',onPointerDown);renderer.domElement.addEventListener('pointermove',onPointerMove);renderer.domElement.addEventListener('pointerup',onPointerUp);renderer.domElement.addEventListener('pointercancel',onPointerUp);
  renderer.domElement.addEventListener('dblclick',removeSelected);
  const records=saved?.objects||[];state.objects=[];
- if(records.length){records.forEach(r=>addFurniture(r.catalogId,r));selectObject(null)}
+ if(records.length){records.forEach(r=>addFurniture(r.catalogId,r));const present=new Set(records.map(r=>r.catalogId));['ps5','dualsense','monitor2','keyboard','headset','poster','shelf','led','plant'].filter(id=>!present.has(id)).forEach(id=>addFurniture(id));selectObject(null)}
  else ['bed','desk','chair','monitor','monitor2','pc','ps5','dualsense','keyboard','headset','rug','poster','shelf','led','plant'].forEach(id=>addFurniture(id));
  $('#sceneRoomName').textContent=(state.roomName||'MY DREAM ROOM').toUpperCase();$('#roomNameInput').value=state.roomName;
  applyTheme(state.theme);setFloor(state.floor);setGame(state.game);$('#ledColor').value=state.led;$('#intensity').value=state.intensity;$('#intensityLabel').textContent=state.intensity+'%';setLights();
