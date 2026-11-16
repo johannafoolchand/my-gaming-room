@@ -11,7 +11,8 @@ const catalog=[
 {id:'monitor',name:'Écran ultra-wide',group:'gaming',kind:'monitor',color:'#171923'},
 {id:'monitor2',name:'Écran secondaire',group:'gaming',kind:'monitorSmall',color:'#20222e'},
 {id:'pc',name:'Tour PC RGB',group:'gaming',kind:'pc',color:'#242431'},
-{id:'ps5',name:'Console PS5',group:'gaming',kind:'console',color:'#ececf3'},
+{id:'ps5',name:'PlayStation 5',group:'gaming',kind:'console',color:'#f0eef5'},
+{id:'dualsense',name:'Manette DualSense',group:'gaming',kind:'controller',color:'#ececf3'},
 {id:'keyboard',name:'Clavier mécanique',group:'gaming',kind:'keyboard',color:'#24212d'},
 {id:'headset',name:'Casque gaming',group:'gaming',kind:'headset',color:'#252332'},
 {id:'lamp',name:'Lampe design',group:'lighting',kind:'lamp',color:'#f2d3a9'},
@@ -37,7 +38,7 @@ ghost:['GHOST OF TSUSHIMA','#4b493a','#c9a56a'],re4:['RESIDENT EVIL 4','#20252b'
 };
 const defaults={theme:'pink',wall:'#e7dce8',floor:'wood',led:'#eb7bd0',intensity:70,lights:true,game:'spiderman',roomName:'My dream room',objects:[],selectedId:null};
 let state=structuredClone(defaults),savedRooms=[],selected=null;
-let renderer,world,camera,controls,raycaster,pointer,dragObject=null,floorMesh,wallMeshes=[],ledMeshes=[],mainLight,screenTexture;
+let renderer,world,camera,controls,raycaster,pointer,dragObject=null,dragMode='move',floorMesh,wallMeshes=[],ledMeshes=[],mainLight,screenTexture;
 const cache=new Map();
 function notify(s){toast.textContent=s;toast.classList.add('show');clearTimeout(notify.timer);notify.timer=setTimeout(()=>toast.classList.remove('show'),2200)}
 function parse(v,f){try{return v?JSON.parse(v):f}catch{return f}}
@@ -68,7 +69,18 @@ function buildFurniture(d){
   box(g,'Boîtier',[.55,1.1,.65],[0,.6,0],c,{roughness:.28,metalness:.22});box(g,'Verre trempé',[.42,.91,.025],[0,.62,.34],'#4d4263',{roughness:.16,metalness:.1});
   for(const y of [.32,.6,.88]){const f=cyl(g,'Ventilateur RGB',.13,.13,.025,[0,y,.37],state.led,32);f.rotation.x=Math.PI/2}
  }else if(d.kind==='console'){
-  box(g,'Console',[.34,.95,.28],[0,.52,0],c,{roughness:.22});box(g,'Ligne centrale',[.07,.86,.285],[0,.52,.15],'#9996a6',{roughness:.25});box(g,'Socle',[.42,.05,.32],[0,.035,0],dark);
+  // Sculpted vertical PS5 silhouette: curved white side plates around a black core.
+  box(g,'Corps noir central',[.29,1.02,.25],[0,.56,0],'#171820',{roughness:.28,metalness:.18});
+  for(const side of [-1,1]){const plate=box(g,'Panneau blanc incurvé',[.16,1.12,.31],[side*.19,.59,0],c,{roughness:.24,metalness:.08});plate.rotation.z=side*.055;}
+  box(g,'Fente disque',[.012,.22,.012],[.151,.72,.16],'#777985');box(g,'Voyant console',[.018,.035,.012],[.151,.19,.16],'#6fc9ff');
+  box(g,'Base noire',[.48,.055,.34],[0,.055,0],dark,{roughness:.28});
+ }else if(d.kind==='controller'){
+  const shell=new THREE.Mesh(new THREE.SphereGeometry(.34,32,20),mat(c,.42));shell.scale.set(1.45,.34,.78);shell.position.y=.19;shell.castShadow=true;g.add(shell);
+  for(const x of [-.29,.29]){const grip=new THREE.Mesh(new THREE.CapsuleGeometry(.105,.32,5,12),mat(c,.45));grip.position.set(x,.04,.05);grip.rotation.z=x<0?.2:-.2;grip.castShadow=true;g.add(grip)}
+  for(const x of [-.24,.24])ball(g,'Stick analogique',.055,[x,.31,-.025],'#242631');
+  box(g,'Croix directionnelle',[.22,.045,.07],[-.29,.31,-.02],'#242631');box(g,'Croix verticale',[.07,.046,.22],[-.29,.31,-.02],'#242631');
+  for(const [x,z,col] of [[.28,-.08,'#79a9e8'],[.39,.01,'#e99bbf'],[.28,.1,'#9ed7c1'],[.17,.01,'#d9d4ed']])ball(g,'Bouton action',.045,[x,.31,z],col);
+  box(g,'Pavé tactile',[.24,.018,.16],[0,.31,-.11],'#c8c9d2');
  }else if(d.kind==='keyboard'){
   box(g,'Clavier',[.9,.07,.32],[0,.08,0],dark);for(let r=0;r<3;r++)for(let col=0;col<11;col++)box(g,'Touche',[.055,.025,.055],[-.38+col*.076,.13,-.105+r*.095],r===1?state.led:'#aaa1b5');
  }else if(d.kind==='headset'){
@@ -129,7 +141,7 @@ function applyTheme(key){
 }
 function setFloor(f){const finish=['wood','dark','stone'].includes(f)?f:'wood';state.floor=finish;floorMesh.material=mat(finish==='dark'?'#51414b':finish==='stone'?'#a59da9':'#bd9478',.9);$$('[data-finish]').forEach(b=>b.classList.toggle('selected',b.dataset.finish===finish));persist()}
 function placePosition(kind){
- const map={bed:[-2.45,0,1.55],desk:[-.1,0,-2.35],chair:[-.1,0,-.95],monitor:[-.1,1.18,-2.42],monitorSmall:[1.1,1.18,-2.42],pc:[1.22,.08,-2.15],lamp:[2.85,0,-2.5],plant:[3,0,2.6],rug:[0,.02,.45],sofa:[2.5,0,1],poster:[-1.7,1.5,-3.37],shelf:[1.6,1.8,-3.38],console:[1.6,1.15,-2.3],keyboard:[-.1,1.2,-1.8],headset:[.9,1.17,-1.9],led:[-3.5,0,0]};
+ const map={bed:[-2.45,0,1.55],desk:[-.1,0,-2.35],chair:[-.1,0,-.95],monitor:[-.1,1.18,-2.42],monitorSmall:[1.1,1.18,-2.42],pc:[1.22,.08,-2.15],lamp:[2.85,0,-2.5],plant:[3,0,2.6],rug:[0,.02,.45],sofa:[2.5,0,1],poster:[-1.7,1.5,-3.37],shelf:[1.6,1.8,-3.38],console:[1.72,.08,-1.8],dualsense:[.45,1.22,-1.7],keyboard:[-.1,1.2,-1.8],headset:[.9,1.17,-1.9],led:[-3.5,0,0]};
  return map[kind]||[0,0,0];
 }
 function syncRecord(obj){
@@ -159,13 +171,13 @@ function removeSelected(){
 function refreshCount(){$('#objectCount').textContent=state.objects.length}
 function pointerSet(e){const r=renderer.domElement.getBoundingClientRect();pointer.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1)}
 function hitObject(e){pointerSet(e);raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(world.children.filter(x=>x.userData.instanceId),true);if(!hits.length)return null;let o=hits[0].object;while(o.parent&&!o.userData.instanceId)o=o.parent;return o.userData.instanceId?o:null}
-function onPointerDown(e){if(e.button!==0)return;const obj=hitObject(e);if(!obj){selectObject(null);return}selectObject(obj);dragObject=obj;controls.enabled=false;renderer.domElement.setPointerCapture(e.pointerId)}
+function onPointerDown(e){if(e.button!==0)return;const obj=hitObject(e);if(!obj){selectObject(null);return}selectObject(obj);dragObject=obj;dragMode=e.shiftKey?'rotate':'move';controls.enabled=false;renderer.domElement.setPointerCapture(e.pointerId)}
 function onPointerMove(e){
- if(!dragObject)return;pointerSet(e);raycaster.setFromCamera(pointer,camera);
+ if(!dragObject)return;if(dragMode==='rotate'){dragObject.rotation.y+=e.movementX*.012;syncRecord(dragObject);$('#objectRotation').value=(Math.round(THREE.MathUtils.radToDeg(dragObject.rotation.y))+360)%360;$('#rotationValue').textContent=$('#objectRotation').value+'°';return}pointerSet(e);raycaster.setFromCamera(pointer,camera);
  const plane=new THREE.Plane(new THREE.Vector3(0,1,0),-dragObject.position.y),hit=new THREE.Vector3();
  if(raycaster.ray.intersectPlane(plane,hit)){dragObject.position.x=THREE.MathUtils.clamp(hit.x,-3.65,3.65);dragObject.position.z=THREE.MathUtils.clamp(hit.z,-3.1,3.1);syncRecord(dragObject)}
 }
-function onPointerUp(){if(!dragObject)return;persist();dragObject=null;controls.enabled=true}
+function onPointerUp(){if(!dragObject)return;persist();dragObject=null;dragMode='move';controls.enabled=true}
 function setView(v){
  $$('.nav-link').forEach(b=>b.classList.toggle('active',b.dataset.view===v));$('#cataloguePanel').classList.toggle('hidden',v==='saved');$('#savedPanel').classList.toggle('hidden',v!=='saved');
  $('#pageTitle').innerHTML=v==='saved'?'Mes sauvegardes <span>✦</span>':v==='catalogue'?'Catalogue <span>✦</span>':'Ma chambre <span>✦</span>';
@@ -218,7 +230,7 @@ function init(){
  renderer.domElement.addEventListener('dblclick',removeSelected);
  const records=saved?.objects||[];state.objects=[];
  if(records.length){records.forEach(r=>addFurniture(r.catalogId,r));selectObject(null)}
- else ['bed','desk','chair','monitor','pc','rug'].forEach(id=>addFurniture(id));
+ else ['bed','desk','chair','monitor','monitor2','pc','ps5','dualsense','keyboard','headset','rug','poster','shelf','led','plant'].forEach(id=>addFurniture(id));
  $('#sceneRoomName').textContent=(state.roomName||'MY DREAM ROOM').toUpperCase();$('#roomNameInput').value=state.roomName;
  applyTheme(state.theme);setFloor(state.floor);setGame(state.game);$('#ledColor').value=state.led;$('#intensity').value=state.intensity;$('#intensityLabel').textContent=state.intensity+'%';setLights();
  renderCatalog();renderSaved();refreshCount();selectObject(null);document.querySelector('[data-panel="themes"]').click();
@@ -247,4 +259,5 @@ $('#duplicateBtn').onclick=()=>{if(!selected)return;const r=state.objects.find(x
 $('#fullscreenBtn').onclick=()=>host.requestFullscreen?.().catch(()=>notify('Plein écran indisponible'));
 $('#cameraHome').onclick=()=>{camera.position.set(7,6.2,9);controls.target.set(0,1.1,0);controls.update()};
 let zoom=1;const zoomBy=v=>{zoom=THREE.MathUtils.clamp(zoom+v,.75,1.45);camera.position.multiplyScalar(v<0?1.08:.92);$('#zoomValue').textContent=Math.round(zoom*100)+'%'};$('#zoomIn').onclick=()=>zoomBy(.05);$('#zoomOut').onclick=()=>zoomBy(-.05);
+window.addEventListener('keydown',e=>{if(!selected||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName))return;if(e.key.toLowerCase()==='q')rotateSelected(-5);if(e.key.toLowerCase()==='e')rotateSelected(5);});
 init();
