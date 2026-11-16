@@ -254,6 +254,8 @@ $('#objectColor').addEventListener('input',e=>{if(!selected)return;colorObject(s
 $('#objectScale').addEventListener('input',e=>{if(!selected)return;selected.scale.setScalar(+e.target.value/100);$('#scaleValue').textContent=e.target.value+'%';syncRecord(selected)});
 $('#objectRotation').addEventListener('input',e=>{if(!selected)return;selected.rotation.y=THREE.MathUtils.degToRad(+e.target.value);$('#rotationValue').textContent=e.target.value+'°';syncRecord(selected)});
 $('#objectScale').addEventListener('change',persist);$('#objectRotation').addEventListener('change',persist);
+$('#rotateLeftBtn').onclick=()=>rotateSelected(-15);$('#rotateRightBtn').onclick=()=>rotateSelected(15);
+function rotateSelected(degrees){if(!selected)return;selected.rotation.y+=THREE.MathUtils.degToRad(degrees);const value=(Math.round(THREE.MathUtils.radToDeg(selected.rotation.y))+360)%360;$('#objectRotation').value=value;$('#rotationValue').textContent=value+'°';syncRecord(selected);persist()}
 $('#deleteBtn').onclick=removeSelected;
 $('#duplicateBtn').onclick=()=>{if(!selected)return;const r=state.objects.find(x=>x.instanceId===selected.userData.instanceId);if(r)addFurniture(r.catalogId,{...JSON.parse(JSON.stringify(r)),instanceId:crypto.randomUUID(),position:[r.position[0]+.5,r.position[1],r.position[2]+.5]})};
 $('#fullscreenBtn').onclick=()=>host.requestFullscreen?.().catch(()=>notify('Plein écran indisponible'));
