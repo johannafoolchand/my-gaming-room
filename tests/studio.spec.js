@@ -33,7 +33,7 @@ test('applies room themes and saves the current configuration', async ({ page })
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('gamingRoomSaved3D') || '[]').length)).toBe(1);
   await page.reload();
   await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
-  await expect(page.locator('#objectCount')).toHaveText('6');
+  await expect(page.locator('#objectCount')).toHaveText('15');
 });
 
 test('game selector updates the selected PS5 screen preview', async ({ page }) => {
