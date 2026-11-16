@@ -15,14 +15,14 @@ Gaming Room Studio permet de composer et personnaliser une chambre gaming direct
 - Scène 3D avec murs, sol, ouverture, éclairage et caméra orbitale
 - Navigation dans la scène : rotation, zoom et retour à la vue initiale
 - Catalogue d'objets 3D : lit, bureau, fauteuil, canapé, écrans, PC, console, clavier, casque, lampe, LED, plante, affiche, étagère et tapis
-- Ajout, sélection, déplacement, duplication, rotation, mise à l'échelle, recoloration et suppression des objets
+- Ajout, sélection, déplacement, duplication, rotation par curseur, boutons ±15°, touches Q/E ou Maj + glisser, mise à l'échelle, recoloration et suppression des objets\n- Setup de départ PlayStation avec console PS5 et manette DualSense, double écran, tour PC RGB et accessoires\n- Mise à niveau des anciennes chambres sauvegardées sans écraser les positions déjà personnalisées
 - Ambiances prédéfinies, couleur des murs, finition du sol et réglages de l'éclairage LED
 - Sélection d'un jeu pour personnaliser l'aperçu affiché sur les écrans
 - Sauvegarde locale de plusieurs configurations dans le navigateur
 - Export de la configuration au format JSON
 - Interface responsive pour ordinateur et mobile
 
-## Technologies
+## Manipulation dans la scène\n\n- **Tourner la caméra :** glisser dans la scène ; zoom avec la molette.\n- **Déplacer un meuble :** cliquer-glisser l'objet.\n- **Faire pivoter un meuble :** le sélectionner puis utiliser le curseur, les boutons −15° / +15°, les touches Q/E ou Maj + glisser.\n- **Personnaliser :** changer la couleur, la taille, dupliquer ou supprimer l'objet depuis le panneau Objet.\n\n## Technologies
 
 | Technologie | Utilisation |
 | --- | --- |
