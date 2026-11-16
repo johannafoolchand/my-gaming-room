@@ -12,14 +12,14 @@ test('loads the real 3D room and its initial furniture', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
   await expect(page.locator('#scene3d canvas')).toBeVisible();
-  await expect(page.locator('#objectCount')).toHaveText('6');
+  await expect(page.locator('#objectCount')).toHaveText('15');
 });
 
 test('adds furniture and exposes object properties', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
   await page.getByRole('button', { name: /Fauteuil gaming/ }).click();
-  await expect(page.locator('#objectCount')).toHaveText('7');
+  await expect(page.locator('#objectCount')).toHaveText('16');
   await expect(page.locator('#objectProperties')).toBeVisible();
   await expect(page.locator('#selectedName')).toContainText('Fauteuil gaming');
 });
@@ -92,6 +92,6 @@ test('rotates the selected object with the rotation buttons', async ({ page }) =
   await page.getByRole('button', { name: /PlayStation 5/ }).click();
   await page.locator('#rotateRightBtn').click();
   await expect(page.locator('#rotationValue')).toHaveText('15°');
-  const rotation = await page.evaluate(() => JSON.parse(localStorage.getItem('gamingRoomStudio3D')).objects.find(item => item.catalogId === 'ps5').rotation);
+  const rotation = await page.evaluate(() => JSON.parse(localStorage.getItem('gamingRoomStudio3D')).objects.filter(item => item.catalogId === 'ps5').at(-1).rotation);
   expect(rotation).toBeCloseTo(Math.PI / 12, 4);
 });
