@@ -74,3 +74,24 @@ test('exports the current room as a JSON file', async ({ page }) => {
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe('my-gaming-room.json');
 });
+
+
+test('starts with a complete PlayStation gaming setup', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
+  await expect(page.locator('#objectCount')).toHaveText('15');
+  const ids = await page.evaluate(() => JSON.parse(localStorage.getItem('gamingRoomStudio3D') || '{}').objects.map(item => item.catalogId));
+  expect(ids).toContain('ps5');
+  expect(ids).toContain('dualsense');
+  expect(ids).toContain('headset');
+});
+
+test('rotates the selected object with the rotation buttons', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#engineStatus')).toContainText('MOTEUR 3D ACTIF', { timeout: 30_000 });
+  await page.getByRole('button', { name: /PlayStation 5/ }).click();
+  await page.locator('#rotateRightBtn').click();
+  await expect(page.locator('#rotationValue')).toHaveText('15°');
+  const rotation = await page.evaluate(() => JSON.parse(localStorage.getItem('gamingRoomStudio3D')).objects.find(item => item.catalogId === 'ps5').rotation);
+  expect(rotation).toBeCloseTo(Math.PI / 12, 4);
+});
