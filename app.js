@@ -213,7 +213,7 @@ function restoreRoom(r){
 function resetRoom(){
  for(const o of [...world.children])if(o.userData.instanceId)world.remove(o);
  state=structuredClone(defaults);wallMeshes.forEach(w=>w.material=mat(state.wall));applyTheme('pink');setFloor('wood');setGame('spiderman');
- ['bed','desk','chair','monitor','pc','rug'].forEach(id=>addFurniture(id));selectObject(null);$('#sceneRoomName').textContent=state.roomName.toUpperCase();setLights();persist();notify('Pièce réinitialisée');
+ ['bed','desk','chair','monitor','monitor2','pc','ps5','dualsense','keyboard','headset','rug','poster','shelf','led','plant'].forEach(id=>addFurniture(id));selectObject(null);$('#sceneRoomName').textContent=state.roomName.toUpperCase();setLights();persist();notify('Pièce réinitialisée');
 }
 function exportConfig(){const payload={...state,objects:state.objects.map(o=>({...o}))};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='my-gaming-room.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Configuration JSON exportée')}
 
