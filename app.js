@@ -207,7 +207,7 @@ function saveRoom(){const snap=JSON.parse(JSON.stringify(state));snap.selectedId
 function restoreRoom(r){
  for(const o of [...world.children])if(o.userData.instanceId)world.remove(o);
  state={...defaults,...JSON.parse(JSON.stringify(r)),objects:[]};wallMeshes.forEach(w=>w.material=mat(state.wall));setFloor(state.floor);applyTheme(state.theme);setGame(state.game);
- state.objects=[];(r.objects||[]).forEach(x=>addFurniture(x.catalogId,x));selectObject(null);
+ state.objects=[];const records=r.objects||[];records.forEach(x=>addFurniture(x.catalogId,x));const present=new Set(records.map(x=>x.catalogId));['ps5','dualsense','monitor2','keyboard','headset','poster','shelf','led','plant'].filter(id=>!present.has(id)).forEach(id=>addFurniture(id));selectObject(null);
  $('#sceneRoomName').textContent=state.roomName.toUpperCase();setLights();setView('studio');persist();notify('Chambre chargée');
 }
 function resetRoom(){
