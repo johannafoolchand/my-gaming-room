@@ -1,59 +1,63 @@
-# ✦ Gaming Room Studio
+# Gaming Room Studio — configurateur 3D
 
-> A cozy gaming-room designer blending Pinterest-inspired interiors, RGB setups and a virtual room-studio experience.
+> Un configurateur de chambre gaming interactif en 3D, réalisé avec Three.js, JavaScript et CSS responsive.
 
-![HTML](https://img.shields.io/badge/HTML5-Structure-E88BD1?style=flat-square&logo=html5&logoColor=white)
-![CSS](https://img.shields.io/badge/CSS3-Interface-9B82F2?style=flat-square&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-F2C96D?style=flat-square&logo=javascript&logoColor=white)
-[![Deploy](https://github.com/johannafoolchand/my-gaming-room/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/johannafoolchand/my-gaming-room/actions/workflows/deploy.yml)
+[![Déploiement GitHub Pages](https://github.com/johannafoolchand/my-gaming-room/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/johannafoolchand/my-gaming-room/actions/workflows/deploy.yml)
 
-Gaming Room Studio is a browser-based room-customization concept. It combines an immersive gaming-room visual, a dark glassmorphism interface, curated design moods and interactive controls for building a personal space.
+**Démo en ligne :** https://johannafoolchand.github.io/my-gaming-room/
 
-## Project at a glance
+## Présentation
 
-| Area | Implementation |
+Gaming Room Studio permet de composer et personnaliser une chambre gaming directement dans le navigateur. La scène utilise Three.js : les meubles sont des objets 3D manipulables et non une simple image de fond.
+
+## Fonctionnalités
+
+- Scène 3D avec murs, sol, ouverture, éclairage et caméra orbitale
+- Navigation dans la scène : rotation, zoom et retour à la vue initiale
+- Catalogue d'objets 3D : lit, bureau, fauteuil, canapé, écrans, PC, console, clavier, casque, lampe, LED, plante, affiche, étagère et tapis
+- Ajout, sélection, déplacement, duplication, rotation, mise à l'échelle, recoloration et suppression des objets
+- Ambiances prédéfinies, couleur des murs, finition du sol et réglages de l'éclairage LED
+- Sélection d'un jeu pour personnaliser l'aperçu affiché sur les écrans
+- Sauvegarde locale de plusieurs configurations dans le navigateur
+- Export de la configuration au format JSON
+- Interface responsive pour ordinateur et mobile
+
+## Technologies
+
+| Technologie | Utilisation |
 | --- | --- |
-| Interface | Semantic HTML5 |
-| Visual system | Responsive CSS, glassmorphism, layered scene composition |
-| Interactions | Vanilla JavaScript and DOM events |
-| Customization | Themes, accent colors, lighting, room environments, floor finishes and draggable object markers |
-| Persistence | Browser `localStorage` |
-| Saved designs | Multiple locally stored room configurations |
-| Export | PNG preview with JSON fallback |
-| Deployment | GitHub Actions and GitHub Pages |
-
-## Features
-
-- Immersive gaming-room studio with a Pinterest-meets-gaming art direction
-- Responsive three-column workspace with a dark translucent control panel
-- Six visual themes and a configurable accent palette
-- Lighting toggle, LED intensity and ambient modes
-- Switch between three room environments (gaming studio, cozy bedroom and neon battlestation)
-- Add, drag and remove visual room objects, including furniture, gaming gear and decor
-- Rename the room and choose a floor finish
-- Save, restore and delete multiple room configurations
-- Export the room preview as PNG, with a JSON configuration fallback
-- Responsive layout for desktop, tablet and mobile
+| HTML5 | Structure et contrôles de l'interface |
+| CSS3 | Mise en page responsive et direction artistique |
+| JavaScript ES modules | Logique applicative et interactions |
+| Three.js | Scène, caméra, géométries, matériaux et éclairage 3D |
+| OrbitControls | Rotation et zoom de la caméra |
+| localStorage | Sauvegarde des configurations dans le navigateur |
+| Playwright | Tests automatisés desktop et mobile |
+| GitHub Actions | Tests et déploiement continu |
+| GitHub Pages | Hébergement de la démonstration |
 
 ## Architecture
 
-The application is intentionally lightweight and runs in the browser without a build step.
+L'application est volontairement légère : aucun bundler n'est nécessaire. Three.js et OrbitControls sont chargés via un import map depuis jsDelivr.
 
-```mermaid
-flowchart TD
-  U[User] --> UI[HTML interface]
-  UI --> CSS[Responsive CSS and visual scene]
-  UI --> JS[Vanilla JavaScript]
-  JS --> C[Theme and room controls]
-  JS --> O[Draggable room objects]
-  JS --> L[localStorage]
-  JS --> E[PNG / JSON export]
-  A[GitHub Actions] --> P[GitHub Pages]
+```text
+my-gaming-room/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml
+├── tests/
+│   └── studio.spec.js
+├── index.html
+├── styles.css
+├── app.js
+├── package.json
+├── playwright.config.js
+└── README.md
 ```
 
-## Run locally
+## Lancer le projet en local
 
-Requirements: a modern browser and Python 3 for the optional local server.
+Prérequis : Python 3, Node.js et npm.
 
 ```bash
 git clone https://github.com/johannafoolchand/my-gaming-room.git
@@ -61,35 +65,39 @@ cd my-gaming-room
 python3 -m http.server 8000
 ```
 
-Open [http://localhost:8000](http://localhost:8000).
+Ouvrir ensuite http://localhost:8000.
 
-## Project structure
+Pour exécuter les tests automatisés :
 
-```text
-my-gaming-room/
-├── .github/
-│   └── workflows/
-│       └── deploy.yml
-├── index.html
-├── styles.css
-├── app.js
-├── .gitignore
-└── README.md
+```bash
+npm install
+npx playwright install chromium
+npm test
 ```
 
-## Deployment
+Les tests vérifient le chargement du moteur 3D, l'ajout d'objets, la personnalisation, la sauvegarde locale et les contrôles sur une fenêtre mobile.
 
-The `deploy.yml` workflow publishes the static site to GitHub Pages on pushes to `main`. In repository settings, GitHub Pages must use **GitHub Actions** as its publishing source.
+## Limites connues
 
-## What this project demonstrates
+- Les meubles sont actuellement construits à partir de géométries Three.js procédurales. Ce ne sont pas encore des modèles 3D photoréalistes issus d'une bibliothèque de mobilier.
+- Les visuels de jeux affichés sur les écrans sont des aperçus graphiques générés localement ; ils ne reproduisent pas les jaquettes officielles ni des captures de gameplay.
+- Les configurations sont enregistrées dans le stockage local du navigateur. Elles ne sont pas synchronisées entre appareils.
+- Le chargement de Three.js dépend de l'accès au CDN jsDelivr.
 
-- Responsive interface composition with HTML and CSS
-- State-driven UI updates using vanilla JavaScript
-- Pointer-based drag interactions
-- Browser persistence with `localStorage`
-- Client-side image export and JSON downloads
-- Continuous deployment of a static front-end project
+## Déploiement
+
+Chaque push sur `main` déclenche le workflow GitHub Actions `.github/workflows/deploy.yml`, qui publie le site sur GitHub Pages. La source de publication du dépôt doit être configurée sur **GitHub Actions**.
+
+## Compétences démontrées
+
+- Développement front-end en JavaScript moderne
+- Intégration d'une scène 3D avec Three.js
+- Manipulation d'objets 3D et gestion des interactions pointeur
+- Gestion d'état et persistance côté navigateur
+- Conception d'une interface responsive
+- Tests end-to-end avec Playwright
+- Intégration continue et déploiement continu avec GitHub Actions
 
 ---
 
-Made with care by [Johanna Foolchand](https://github.com/johannafoolchand). ✦
+Projet conçu et développé par [Johanna Foolchand](https://github.com/johannafoolchand).
